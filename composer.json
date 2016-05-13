@@ -1,6 +1,6 @@
 {
     "name": "aaemnnosttv/wp-cli-valet-command",
-    "description": "",
+    "description": "Command for Laravel Valet for stupid easy fast WordPress development environments",
     "license": "MIT",
     "authors": [],
     "minimum-stability": "dev",
