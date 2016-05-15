@@ -9,6 +9,15 @@ if ( ! class_exists( 'WP_CLI' ) ) {
  */
 class WP_CLI_Valet_Command
 {
+	protected $args;
+	protected $site_name;
+	protected $is_secure;
+	protected $proto;
+	protected $tld;
+	protected $domain;
+	protected $full_url;
+	protected $full_path;
+
 	/**
 	 * Create a new WordPress install -- fast
 	 *
@@ -55,111 +64,173 @@ class WP_CLI_Valet_Command
 	 * default: 'wp_'
 	 * ---
 	 *
+	 * [--admin_user=<username>]
+	 * : The username to create for the WordPress admin user.
+	 * ---
+	 * default: admin
+	 * ---
+	 *
+	 * [--admin_password=<password>]
+	 * : The password to create for the WordPress admin user.
+	 * ---
+	 * default: admin
+	 * ---
+	 *
+	 * [--admin_email=<email>]
+	 * : The email to use for the WordPress admin user.
+	 * ---
+	 * default:
+	 * ---
+	 *
 	 * [--secure]
 	 * : Valet will setup the site using HTTPS (default). Use --no-secure for http
-	 * ---
-	 * default: true
-	 * ---
 	 *
  	 * @when before_wp_load
 	 */
 	public function new($args, $assoc_args)
 	{
-		$site_name  = preg_replace('/^a-zA-Z/', '-', $args[0]);
-		$is_secure  = \WP_CLI\Utils\get_flag_value($assoc_args, 'secure', true);
-		$proto      = $is_secure ? 'https' : 'http';
-		$tld        = $this->valet('domain');
-		$domain     = "$site_name.$tld";
+		$this->setup_props($args, $assoc_args);
 
-		$full_url   = "$proto://$domain";
-		$full_path  = getcwd() . '/' . $site_name;
-
-		if (! is_dir($full_path) && ! mkdir($full_path, 0755, true)) {
+		if (! is_dir($this->full_path) && ! mkdir($this->full_path, 0755, true)) {
 			WP_CLI::error('failed creating directory');
 		}
 
 		WP_CLI::line('Don\'t go anywhere, this will only take a second...');
 
+		$this->download_wp();
+
+		$this->configure_wp();
+
+		$this->create_db();
+
+		$this->install_wp();
+
+		if ($this->is_secure) {
+			$this->valet("secure $this->site_name");
+		}
+
+		WP_CLI::success("$this->site_name ready! $this->full_url");
+	}
+
+	protected function download_wp()
+	{
 		WP_CLI::debug('Downloading WP');
 		WP_CLI::launch_self('core download', [], [
-			'path'    => $full_path,
-			'version' => $assoc_args['version'],
+			'path'    => $this->full_path,
+			'version' => $this->args['version'],
 		], true, true);
+	}
 
+	protected function configure_wp()
+	{
 		WP_CLI::debug('Configuring WP');
 		WP_CLI::launch_self('core config', [], [
-			'dbname'   => $assoc_args['dbname'] ?: "wp_{$site_name}",
-			'dbuser'   => $assoc_args['dbuser'],
-			'dbprefix' => $assoc_args['dbprefix'],
+			'dbname'   => $this->args['dbname'] ?: "wp_{$this->site_name}",
+			'dbuser'   => $this->args['dbuser'],
+			'dbprefix' => $this->args['dbprefix'],
 		], false, true, [
-			'path' => $full_path,
+			'path' => $this->full_path,
 		]);
+	}
 
-		if ('mysql' == $assoc_args['db']) {
-			WP_CLI::debug('Creating MySQL DB');
-			WP_CLI::launch_self('db create', [], [], true, true, [
-				'path' => $full_path,
-			]);
-		}
-		if ('sqlite' == $assoc_args['db']) {
-			WP_CLI::debug('Installing SQLite DB');
 
-			if (! class_exists('ZipArchive')) {
-				WP_CLI::error('PHP Zip extension seems to be missing.  Can\'t install SQLite integration automatically.');
-			}
-
-			WP_CLI::debug('Downloading sqlite-integration');
-			$local_file = "$full_path/sqlite.zip";
-
-			file_put_contents($local_file, fopen('https://downloads.wordpress.org/plugin/sqlite-integration.1.8.1.zip', 'r'));
-
-			$zip = new ZipArchive;
-			$zip->open($local_file);
-		    $zip->extractTo("$full_path/wp-content/plugins/");
-		    $zip->close();
-
-		    unlink($local_file);
-
-			if (! file_exists("$full_path/wp-content/plugins/sqlite-integration/db.php")) {
-				WP_CLI::warning('sqlite-integration install failed');
-				return;
-			}
-
-			copy(
-				"$full_path/wp-content/plugins/sqlite-integration/db.php",
-				"$full_path/wp-content/db.php"
-			);
-
-			WP_CLI::debug('sqlite-integration installed!');
+	protected function create_db()
+	{
+		if ('sqlite' == $this->args['db']) {
+			return $this->create_sqlite_db();
 		}
 
+		return $this->create_mysql_db();
+	}
+
+	protected function create_mysql_db()
+	{
+		WP_CLI::debug('Creating MySQL DB');
+		WP_CLI::launch_self('db create', [], [], true, true, [
+			'path' => $this->full_path,
+		]);
+	}
+
+	protected function create_sqlite_db()
+	{
+		WP_CLI::debug('Installing SQLite DB');
+
+		if (! class_exists('ZipArchive')) {
+			WP_CLI::error('PHP Zip extension seems to be missing.  Can\'t install SQLite integration automatically.');
+		}
+
+		WP_CLI::debug('Downloading sqlite-integration');
+		$local_file = "$this->full_path/sqlite.zip";
+
+		file_put_contents($local_file, fopen('https://downloads.wordpress.org/plugin/sqlite-integration.1.8.1.zip', 'r'));
+
+		$zip = new ZipArchive;
+		$zip->open($local_file);
+		$zip->extractTo("$this->full_path/wp-content/plugins/");
+		$zip->close();
+
+		unlink($local_file);
+
+		if (! file_exists("$this->full_path/wp-content/plugins/sqlite-integration/db.php")) {
+			WP_CLI::error('sqlite-integration install failed');
+		}
+
+		copy(
+			"$this->full_path/wp-content/plugins/sqlite-integration/db.php",
+			"$this->full_path/wp-content/db.php"
+		);
+
+		WP_CLI::debug('sqlite-integration installed!');
+	}
+
+	protected function install_wp()
+	{
 		WP_CLI::debug('Installing WordPress DB');
 		WP_CLI::launch_self('core install', [], [
-			'url'            => $full_url,
-			'title'          => $site_name,
-			'admin_user'     => 'admin',
-			'admin_password' => 'admin',
-			'admin_email'    => "admin@{$domain}",
+			'url'            => $this->full_url,
+			'title'          => $this->site_name,
+			'admin_user'     => $this->args['admin_user'],
+			'admin_password' => $this->args['admin_password'],
+			'admin_email'    => $this->args['admin_email'] ?: "admin@{$this->domain}",
 			'skip-email'     => true
 		], true, true, [
-			'path' => $full_path,
+			'path' => $this->full_path,
 		]);
+	}
 
-		if ($is_secure) {
-			$this->valet("secure $site_name");
-		}
+	/**
+	 * [setup_props description]
+	 * @param  [type] $_          [description]
+	 * @param  [type] $assoc_args [description]
+	 * @return [type]             [description]
+	 */
+	protected function setup_props($args, $assoc_args)
+	{
+		$this->args       = $assoc_args;
 
-		WP_CLI::success("$site_name ready! $full_url");
+		$this->site_name  = preg_replace('/^a-zA-Z/', '-', $args[0]);
+		$this->is_secure  = \WP_CLI\Utils\get_flag_value($assoc_args, 'secure', true);
+		$this->proto      = $this->is_secure ? 'https' : 'http';
+		$this->tld        = $this->valet('domain');
+		$this->domain     = "{$this->site_name}.{$this->tld}";
+
+		$this->full_url   = "{$this->proto}://{$this->domain}";
+		$this->full_path  = getcwd() . '/' . $this->site_name;
 	}
 
 	private function valet($command)
 	{
+		$exit_code = null;
+
 		ob_start();
-		system("valet $command");
+		system("valet $command", $exit_code);
 		$stdout = ob_get_clean();
+
+		if ($exit_code > 0) {
+			WP_CLI::error("There was a problem running 'valet $command'.\nError: $stdout");
+		}
 
 		return trim($stdout);
 	}
 }
 WP_CLI::add_command('valet', WP_CLI_Valet_Command::class);
-
