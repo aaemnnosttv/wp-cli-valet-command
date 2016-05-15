@@ -1,10 +1,20 @@
 {
     "name": "aaemnnosttv/wp-cli-valet-command",
-    "description": "Command for Laravel Valet for stupid easy fast WordPress development environments",
+    "description": "WP-CLI command for managing WordPress development environments using Laravel Valet.",
     "license": "MIT",
-    "authors": [],
+    "authors": [
+      {
+        "name": "Evan Mattson",
+        "email": "me@aaemnnost.tv",
+        "homepage": "https://aaemnnost.tv"
+      }
+    ],
+    "homepage": "https://github.com/aaemnnosttv/wp-cli-valet-command",
+    "support": {
+      "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
+    },
     "autoload": {
-        "files": [ "command.php" ]
+        "files": ["command.php"]
     },
     "require": {},
     "require-dev": {
