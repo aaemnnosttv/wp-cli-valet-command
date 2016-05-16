@@ -221,8 +221,16 @@ class WP_CLI_Valet_Command
         $this->full_path  = getcwd() . '/' . $this->site_name;
     }
 
+    /**
+     * Execute a command to the system's valet executable
+     *
+     * @param  [type] $command [description]
+     * @return [type]          [description]
+     */
     private function valet($command)
     {
+        WP_CLI::debug("Running `valet $command`");
+
         $exit_code = null;
 
         ob_start();
