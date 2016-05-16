@@ -17,7 +17,9 @@
     "autoload": {
       "files": ["command.php"]
     },
-    "require": {},
+    "require": {
+      "symfony/process": "~2.7|~3.0"
+    },
     "require-dev": {
         "behat/behat": "~2.5"
     }
