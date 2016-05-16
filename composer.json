@@ -15,7 +15,7 @@
       "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
     },
     "autoload": {
-        "files": ["command.php"]
+      "files": ["command.php"]
     },
     "require": {},
     "require-dev": {
