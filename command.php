@@ -137,6 +137,9 @@ class WP_CLI_Valet_Command
         WP_CLI::success("$this->site_name ready! $this->full_url");
     }
 
+    /**
+     * Download WordPress core
+     */
     protected function download_wp()
     {
         WP_CLI::debug('Downloading WP');
@@ -147,6 +150,9 @@ class WP_CLI_Valet_Command
         ], true, true);
     }
 
+    /**
+     * Generate the configuration file
+     */
     protected function configure_wp()
     {
         WP_CLI::debug('Configuring WP');
@@ -160,7 +166,9 @@ class WP_CLI_Valet_Command
         ]);
     }
 
-
+    /**
+     * Create the database
+     */
     protected function create_db()
     {
         if ('sqlite' == $this->args['db']) {
@@ -170,6 +178,9 @@ class WP_CLI_Valet_Command
         return $this->create_mysql_db();
     }
 
+    /**
+     * Create MySQL database
+     */
     protected function create_mysql_db()
     {
         WP_CLI::debug('Creating MySQL DB');
@@ -179,6 +190,9 @@ class WP_CLI_Valet_Command
         ]);
     }
 
+    /**
+     * Download and install sqlite-integration
+     */
     protected function create_sqlite_db()
     {
         WP_CLI::debug('Installing SQLite DB');
@@ -196,9 +210,10 @@ class WP_CLI_Valet_Command
     }
 
     /**
+     * Install the sqlite-integration plugin, and database drop-in
      *
-     * @param  [type] $version [description]
-     * @return string       local file path
+     * @param  string $path    The full path to install the plugin to
+     * @param  string|null $version The specific plugin version to install
      */
     protected function install_sqlite_integration($path, $version = null)
     {
@@ -238,6 +253,9 @@ class WP_CLI_Valet_Command
         unlink($local_file);
     }
 
+    /**
+     * Install WordPress
+     */
     protected function install_wp()
     {
         WP_CLI::debug('Installing WordPress');
@@ -255,10 +273,9 @@ class WP_CLI_Valet_Command
     }
 
     /**
-     * [setup_props description]
-     * @param  [type] $_          [description]
-     * @param  [type] $assoc_args [description]
-     * @return [type]             [description]
+     * Setup properties based on command arguments
+     * @param  array $args          positional arguments
+     * @param  array $assoc_args    associative arguments
      */
     protected function setup_props($args, $assoc_args)
     {
@@ -277,8 +294,7 @@ class WP_CLI_Valet_Command
     /**
      * Execute a command to the system's valet executable
      *
-     * @param  [type] $command [description]
-     * @return [type]          [description]
+     * @param  string $command  valet command to run
      */
     private function valet($command)
     {
