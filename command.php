@@ -142,12 +142,14 @@ class WP_CLI_Valet_Command
      */
     protected function download_wp()
     {
-        WP_CLI::debug('Downloading WP');
+        WP_CLI::debug('Downloading WordPress');
 
-        WP_CLI::launch_self('core download', [], [
-            'path'    => $this->full_path,
+        $args = [
             'version' => $this->args['version'],
-        ], true, true);
+            'locale' => $this->args['locale'],
+        ];
+
+        $this->wp('core download', [], array_filter($args));
     }
 
     /**
@@ -157,12 +159,10 @@ class WP_CLI_Valet_Command
     {
         WP_CLI::debug('Configuring WP');
 
-        WP_CLI::launch_self('core config', [], [
+        $this->wp('core config', [], [
             'dbname'   => $this->args['dbname'] ?: "wp_{$this->site_name}",
             'dbuser'   => $this->args['dbuser'],
             'dbprefix' => $this->args['dbprefix'],
-        ], false, true, [
-            'path' => $this->full_path,
         ]);
     }
 
@@ -185,9 +185,7 @@ class WP_CLI_Valet_Command
     {
         WP_CLI::debug('Creating MySQL DB');
 
-        WP_CLI::launch_self('db create', [], [], true, true, [
-            'path' => $this->full_path,
-        ]);
+        $this->wp('db create');
     }
 
     /**
@@ -260,15 +258,13 @@ class WP_CLI_Valet_Command
     {
         WP_CLI::debug('Installing WordPress');
 
-        WP_CLI::launch_self('core install', [], [
+        $this->wp('core install', [], [
             'url'            => $this->full_url,
             'title'          => $this->site_name,
             'admin_user'     => $this->args['admin_user'],
             'admin_password' => $this->args['admin_password'],
             'admin_email'    => $this->args['admin_email'] ?: "admin@{$this->domain}",
             'skip-email'     => true
-        ], true, true, [
-            'path' => $this->full_path,
         ]);
     }
 
@@ -289,6 +285,33 @@ class WP_CLI_Valet_Command
             $this->is_secure ? 'https' : 'http',
             $this->domain
         );
+    }
+
+    /**
+     * Spawn a new WP-CLI process
+     * @param  string $command     command to run
+     * @param  array  $positional  positional arguments
+     * @param  array  $assoc_args  associative arguments
+     */
+    protected function wp($command, $positional = [], $assoc_args = [])
+    {
+        WP_CLI::debug("Running 'wp $command' ...");
+
+        $result = WP_CLI::launch_self($command, $positional, $assoc_args,
+            false, // exit on failure
+            true, // detailed return
+            [
+                'path' => $this->full_path,
+            ]
+        );
+
+        WP_CLI::debug("Completed {$result->command}");
+
+        if ($result->return_code > 0) {
+            WP_CLI::error($result->stderr);
+        }
+
+        WP_CLI::debug($result->stdout);
     }
 
     /**
