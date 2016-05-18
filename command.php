@@ -28,7 +28,7 @@ class WP_CLI_Valet_Command
      * [--version=<version>]
      * : WordPress version to install
      * ---
-     * default: latest
+     * default:
      * ---
      *
      * [--locale=<locale>]
