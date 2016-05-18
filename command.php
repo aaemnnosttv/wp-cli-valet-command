@@ -9,13 +9,35 @@ if (! class_exists('WP_CLI')) {
  */
 class WP_CLI_Valet_Command
 {
+    /**
+     * Associative arguments passed to the command
+     * @var array
+     */
     protected $args;
+    /**
+     * The new site name
+     * @var string
+     */
     protected $site_name;
-    protected $is_secure;
-    protected $proto;
-    protected $tld;
+    /**
+     * The full domain of the site
+     * @var string
+     */
     protected $domain;
+    /**
+     * If the site should be setup with a secure protocol
+     * @var string
+     */
+    protected $is_secure;
+    /**
+     * The full site url
+     * @var string
+     */
     protected $full_url;
+    /**
+     * The absolute path to the project directory
+     * @var string
+     */
     protected $full_path;
 
     /**
@@ -33,6 +55,9 @@ class WP_CLI_Valet_Command
      *
      * [--locale=<locale>]
      * : Select which language you want to install
+     * ---
+     * default:
+     * ---
      *
      * [--db=<db>]
      * : Database driver
@@ -82,8 +107,8 @@ class WP_CLI_Valet_Command
      * default:
      * ---
      *
-     * [--secure]
-     * : Valet will setup the site using HTTPS (default). Use --no-secure for http
+     * [--unsecure]
+     * : Provisions the site for http rather than https.
      *
      * @when before_wp_load
      */
@@ -238,15 +263,15 @@ class WP_CLI_Valet_Command
     protected function setup_props($args, $assoc_args)
     {
         $this->args       = $assoc_args;
-
         $this->site_name  = preg_replace('/^a-zA-Z/', '-', $args[0]);
-        $this->is_secure  = \WP_CLI\Utils\get_flag_value($assoc_args, 'secure', true);
-        $this->proto      = $this->is_secure ? 'https' : 'http';
-        $this->tld        = $this->valet('domain');
-        $this->domain     = "{$this->site_name}.{$this->tld}";
-
-        $this->full_url   = "{$this->proto}://{$this->domain}";
+        $this->is_secure  = ! \WP_CLI\Utils\get_flag_value($assoc_args, 'unsecure');
+        $tld              = $this->valet('domain');
+        $this->domain     = "{$this->site_name}.{$tld}";
         $this->full_path  = getcwd() . '/' . $this->site_name;
+        $this->full_url   = sprintf('%s://%s',
+            $this->is_secure ? 'https' : 'http',
+            $this->domain
+        );
     }
 
     /**
