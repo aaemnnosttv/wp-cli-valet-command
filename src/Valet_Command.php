@@ -3,6 +3,7 @@
 namespace WP_CLI_Valet;
 
 use WP_CLI;
+use Symfony\Component\Process\Process;
 
 /**
  * Zonda is golden.
@@ -323,16 +324,16 @@ class Valet_Command
     {
         WP_CLI::debug("Running `valet $command`");
 
-        $exit_code = null;
+        $process = new Process("valet $command");
+        $process->run();
+        $output = trim($process->getOutput());
 
-        ob_start();
-        system("valet $command", $exit_code);
-        $stdout = ob_get_clean();
-
-        if ($exit_code > 0) {
-            WP_CLI::error("There was a problem running 'valet $command'.\nError: $stdout");
+        if (! $process->isSuccessful()) {
+            WP_CLI::error(
+                sprintf("There was a problem running \"valet %s\"\nError: %s", $command, $output)
+            );
         }
 
-        return trim($stdout);
+        return $output;
     }
 }
