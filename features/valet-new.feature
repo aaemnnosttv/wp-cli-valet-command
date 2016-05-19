@@ -1,13 +1,11 @@
 Feature: Test that Valet new command works
 
-  Scenario: WP-CLI loads for your tests
+  Scenario: The valet command exists
     Given an empty directory
 
-    When I run `wp valet new testsite`
+    When I run `wp valet new`
 
-    Then the "testsite/wp-config.php" file should exist
-
-    And STDOUT should contain:
-      """
-      Success: testsite ready!
-      """
+    STDOUT should contain:
+    """
+    wp valet new <domain>
+    """
