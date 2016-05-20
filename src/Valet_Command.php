@@ -111,9 +111,11 @@ class Valet_Command
      * [--unsecure]
      * : Provisions the site for http rather than https.
      *
+     * @subcommand new
+     *
      * @when before_wp_load
      */
-    public function new($args, $assoc_args)
+    public function _new($args, $assoc_args)
     {
         $this->setup_props($args, $assoc_args);
 
