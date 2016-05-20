@@ -1,7 +1,5 @@
 <?php
 
-if (! class_exists('WP_CLI')) {
-    return;
+if (defined('WP_CLI') && WP_CLI) {
+    WP_CLI::add_command('valet', WP_CLI_Valet\Valet_Command::class);
 }
-
-WP_CLI::add_command('valet', WP_CLI_Valet\Valet_Command::class);
