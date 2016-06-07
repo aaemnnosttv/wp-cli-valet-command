@@ -49,4 +49,4 @@ Once you've done so, you can install this package with `wp package install aaemn
 
 Code and ideas are more than welcome.
 
-Please [open an issue](https://github.com/aaemnnosttv/wp-cli-valet-command/issues) with questions, feedback, and violent dissent. Pull requests are expected to include test coverage.
+Please [open an issue](https://github.com/aaemnnosttv/wp-cli-valet-command/issues) with questions, feedback, and violent dissent.
