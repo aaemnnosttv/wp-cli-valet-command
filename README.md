@@ -1,10 +1,6 @@
 WP-CLI Valet Command
 ====================
 
-
-
-[![Build Status](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command.svg?branch=master)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command)
-
 Quick links: [Installing](#installing) | [Contributing](#contributing)
 
 ## Overview
