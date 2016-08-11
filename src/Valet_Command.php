@@ -175,10 +175,10 @@ class Valet_Command
     protected function create_db()
     {
         if ('sqlite' == $this->args['db']) {
-            return $this->create_sqlite_db();
+            $this->create_sqlite_db();
+        } else {
+            $this->create_mysql_db();
         }
-
-        return $this->create_mysql_db();
     }
 
     /**
