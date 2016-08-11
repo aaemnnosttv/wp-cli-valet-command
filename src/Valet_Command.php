@@ -300,13 +300,20 @@ class Valet_Command
     {
         WP_CLI::debug("Running 'wp $command' ...");
 
-        $result = WP_CLI::launch_self($command, $positional, $assoc_args,
-            false, // exit on failure
-            true, // detailed return
-            [
-                'path' => $this->full_path,
-            ]
-        );
+        $assoc_args['path'] = $this->full_path;
+
+        $php_bin          = WP_CLI::get_php_binary();
+        $script_path      = $GLOBALS[ 'argv' ][ 0 ];
+        $positional       = implode(' ', array_map('escapeshellarg', $positional));
+        $other_assoc_args = \WP_CLI\Utils\assoc_args_to_str($assoc_args);
+        $full_command     = "{$php_bin} {$script_path} {$command} {$positional} {$other_assoc_args}";
+
+        $process = \WP_CLI\Process::create($full_command, null, [
+            'HOME'                => getenv('HOME'),
+            'WP_CLI_PACKAGES_DIR' => getenv('WP_CLI_PACKAGES_DIR'),
+            'WP_CLI_CONFIG_PATH'  => getenv('WP_CLI_CONFIG_PATH'),
+        ]);
+        $result  = $process->run();
 
         WP_CLI::debug("Completed {$result->command}");
 
