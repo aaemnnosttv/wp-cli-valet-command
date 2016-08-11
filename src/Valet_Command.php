@@ -147,12 +147,12 @@ class Valet_Command
     {
         WP_CLI::debug('Downloading WordPress');
 
-        $args = [
+        $args = array_filter([
             'version' => $this->args['version'],
-            'locale' => $this->args['locale'],
-        ];
+            'locale'  => $this->args['locale'],
+        ]);
 
-        $this->wp('core download', [], array_filter($args));
+        $this->wp('core download', [], $args);
     }
 
     /**
