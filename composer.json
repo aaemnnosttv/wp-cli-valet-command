@@ -21,5 +21,8 @@
     "require": {
       "php": "^5.5|^7.0",
       "symfony/process": "~2.7|~3.0"
+    },
+    "require-dev": {
+        "wp-cli/wp-cli": "^0.24.1"
     }
 }
