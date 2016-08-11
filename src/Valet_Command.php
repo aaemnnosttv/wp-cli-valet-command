@@ -211,7 +211,9 @@ class Valet_Command
     }
 
     /**
-     * Install the sqlite-integration plugin, and database drop-in
+     * Install the sqlite-integration plugin, and database drop-in.
+     *
+     * We can't just run `plugin install ...' because it requires the database to be setup.
      *
      * @param  string $path    The full path to install the plugin to
      * @param  string|null $version The specific plugin version to install
@@ -327,7 +329,9 @@ class Valet_Command
     /**
      * Execute a command to the system's valet executable
      *
-     * @param  string $command  valet command to run
+     * @param  string $command valet command to run
+     *
+     * @return string
      */
     private function valet($command)
     {
