@@ -40,6 +40,11 @@ class Valet_Command
      * @var string
      */
     protected $full_path;
+    /**
+     * Whether or not to fancify the output
+     * @var bool
+     */
+    protected $show_progress_bar;
 
     /**
      * Create a new WordPress install -- fast
@@ -111,6 +116,9 @@ class Valet_Command
      * [--unsecure]
      * : Provisions the site for http rather than https.
      *
+     * [--skip-progress]
+     * : Disable the progress bar, gain .1sec
+     *
      * @subcommand new
      *
      * @when before_wp_load
@@ -123,19 +131,34 @@ class Valet_Command
             WP_CLI::error('failed creating directory');
         }
 
-        WP_CLI::line('Don\'t go anywhere, this will only take a second...');
+        /**
+         * Here we are going to emulate a progress bar, so we don't use WP_CLI::line
+         * as that would add a new line at the end, which would ruin the effect.
+         **/
+        echo 'Don\'t go anywhere, this will only take a second! ';
+
+        // we can spare .3 sec for a touch of zonda here...
+        $this->progressBar(3);
 
         $this->download_wp();
+        $this->progressBar(1);
 
         $this->configure_wp();
+        $this->progressBar(1);
 
         $this->create_db();
+        $this->progressBar(1);
 
         $this->install_wp();
+        $this->progressBar(1);
 
         if ($this->is_secure) {
             $this->valet("secure $this->site_name");
         }
+
+        // big finale
+        $this->progressBar(10, 50);
+        echo "\n";
 
         WP_CLI::success("$this->site_name ready! $this->full_url");
     }
@@ -290,6 +313,7 @@ class Valet_Command
             $this->is_secure ? 'https' : 'http',
             $this->domain
         );
+        $this->show_progress_bar = ! \WP_CLI\Utils\get_flag_value($assoc_args, 'skip-progress');
     }
 
     /**
@@ -348,5 +372,22 @@ class Valet_Command
         }
 
         return $output;
+    }
+
+    /**
+     * Generate a very basic progress bar.
+     *
+     * @param     $num
+     * @param int $fractionOfSec
+     */
+    protected function progressBar($num, $fractionOfSec = 10)
+    {
+        if (! $this->show_progress_bar) {
+            return;
+        }
+        foreach (range(1,$num) as $iteration) {
+            echo '.';
+            usleep(1000000 / $fractionOfSec);
+        }
     }
 }
