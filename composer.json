@@ -1,6 +1,6 @@
 {
     "name": "aaemnnosttv/wp-cli-valet-command",
-    "description": "WP-CLI command for managing WordPress development environments using Laravel Valet.",
+    "description": "Harness the power of Laravel Valet for creating fully functional WordPress installs in seconds.",
     "keywords": ["wordpress", "laravel", "valet", "zonda"],
     "license": "MIT",
     "authors": [
