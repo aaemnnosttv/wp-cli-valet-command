@@ -188,6 +188,7 @@ class Valet_Command
         $this->wp('core config', [], [
             'dbname'   => $this->args['dbname'] ?: "wp_{$this->site_name}",
             'dbuser'   => $this->args['dbuser'],
+            'dbpass'   => $this->args['dbpass'],
             'dbprefix' => $this->args['dbprefix'],
         ]);
     }
