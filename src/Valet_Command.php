@@ -332,23 +332,21 @@ class Valet_Command
         $php_bin          = WP_CLI::get_php_binary();
         $script_path      = $GLOBALS[ 'argv' ][ 0 ];
         $positional       = implode(' ', array_map('escapeshellarg', $positional));
-        $other_assoc_args = \WP_CLI\Utils\assoc_args_to_str($assoc_args);
-        $full_command     = "{$php_bin} {$script_path} {$command} {$positional} {$other_assoc_args}";
+        $assoc_args       = \WP_CLI\Utils\assoc_args_to_str($assoc_args);
 
-        $process = \WP_CLI\Process::create($full_command, null, [
+        $process = Process::create("{$php_bin} {$script_path} {$command} {$positional} {$assoc_args}", null, [
             'HOME'                => getenv('HOME'),
             'WP_CLI_PACKAGES_DIR' => getenv('WP_CLI_PACKAGES_DIR'),
             'WP_CLI_CONFIG_PATH'  => getenv('WP_CLI_CONFIG_PATH'),
-        ]);
-        $result  = $process->run();
+        ])->run();
 
-        WP_CLI::debug("Completed {$result->command}");
+        static::debug("Completed $process->command");
 
-        if ($result->return_code > 0) {
-            WP_CLI::error($result->stderr);
+        if ($process->return_code > 0) {
+            WP_CLI::error($process->stderr);
         }
 
-        WP_CLI::debug($result->stdout);
+        static::debug($process->stdout);
     }
 
     /**
