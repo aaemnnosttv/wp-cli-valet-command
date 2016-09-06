@@ -168,7 +168,7 @@ class Valet_Command
      */
     protected function download_wp()
     {
-        WP_CLI::debug('Downloading WordPress');
+        static::debug('Downloading WordPress');
 
         $args = array_filter([
             'version' => $this->args['version'],
@@ -183,7 +183,7 @@ class Valet_Command
      */
     protected function configure_wp()
     {
-        WP_CLI::debug('Configuring WP');
+        static::debug('Configuring WP');
 
         $this->wp('core config', [], [
             'dbname'   => $this->args['dbname'] ?: "wp_{$this->site_name}",
@@ -210,7 +210,7 @@ class Valet_Command
      */
     protected function create_mysql_db()
     {
-        WP_CLI::debug('Creating MySQL DB');
+        static::debug('Creating MySQL DB');
 
         $this->wp('db create');
     }
@@ -220,7 +220,7 @@ class Valet_Command
      */
     protected function create_sqlite_db()
     {
-        WP_CLI::debug('Installing SQLite DB');
+        static::debug('Installing SQLite DB');
 
         $this->install_sqlite_integration("$this->full_path/wp-content/plugins/");
 
@@ -262,7 +262,7 @@ class Valet_Command
         $local_file = "/tmp/sqlite-integration.{$version}.zip";
 
         if ($cache->has($cache_key)) {
-            WP_CLI::debug("Using cached file: $cache_key");
+            static::debug("Using cached file: $cache_key");
             $cache->export($cache_key, $local_file);
         } else {
             file_put_contents($local_file, file_get_contents("https://downloads.wordpress.org/plugin/sqlite-integration.{$version}.zip"));
@@ -270,7 +270,7 @@ class Valet_Command
             WP_CLI::get_cache()->import($cache_key, $local_file);
         }
 
-        WP_CLI::debug('Extracting sqlite-integration');
+        static::debug('Extracting sqlite-integration');
 
         $zip = new \ZipArchive;
         $zip->open($local_file);
@@ -285,7 +285,7 @@ class Valet_Command
      */
     protected function install_wp()
     {
-        WP_CLI::debug('Installing WordPress');
+        static::debug('Installing WordPress');
 
         $this->wp('core install', [], [
             'url'            => $this->full_url,
@@ -325,7 +325,7 @@ class Valet_Command
      */
     protected function wp($command, $positional = [], $assoc_args = [])
     {
-        WP_CLI::debug("Running 'wp $command' ...");
+        static::debug("Running 'wp $command' ...");
 
         $assoc_args['path'] = $this->full_path;
 
@@ -360,7 +360,7 @@ class Valet_Command
      */
     private function valet($command)
     {
-        WP_CLI::debug("Running `valet $command`");
+        static::debug("Running `valet $command`");
 
         $process = new Process("valet $command");
         $process->run();
@@ -390,5 +390,13 @@ class Valet_Command
             echo '.';
             usleep(1000000 / $fractionOfSec);
         }
+    }
+
+    /**
+     * @param $message
+     */
+    protected static function debug($message)
+    {
+        WP_CLI::debug("[valet] $message");
     }
 }
