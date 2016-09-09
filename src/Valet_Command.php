@@ -87,7 +87,10 @@ class Valet_Command
      * ---
      *
      * [--dbpass=<dbpass>]
-     * : Set the database user password (MySQL only).  Default: ''
+     * : Set the database user password (MySQL only).
+     * ---
+     * Default: ''
+     * ---
      *
      * [--dbprefix=<dbprefix>]
      * : Set the database table prefix. Default: 'wp_'
@@ -188,7 +191,7 @@ class Valet_Command
         $this->wp('core config', [], [
             'dbname'   => $this->args['dbname'] ?: "wp_{$this->site_name}",
             'dbuser'   => $this->args['dbuser'],
-            'dbpass'   => $this->args['dbpass'],
+            'dbpass'   => isset($this->args['dbpass']) ? $this->args['dbpass'] : '',
             'dbprefix' => $this->args['dbprefix'],
         ]);
     }
