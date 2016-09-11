@@ -399,6 +399,6 @@ class Valet_Command
      */
     protected static function debug($message)
     {
-        WP_CLI::debug("[valet] $message");
+        WP_CLI::debug($message, 'aaemnnosttv/wp-cli-valet-command');
     }
 }
