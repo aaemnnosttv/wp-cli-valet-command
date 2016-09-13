@@ -47,6 +47,14 @@ class Valet_Command
     protected $show_progress_bar;
 
     /**
+     * Register the command with WP-CLI.
+     */
+    public static function register()
+    {
+        WP_CLI::add_command('valet', static::class);
+    }
+
+    /**
      * Create a new WordPress install -- fast
      *
      * ## OPTIONS
