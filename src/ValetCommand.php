@@ -4,6 +4,7 @@ namespace WP_CLI_Valet;
 
 use WP_CLI;
 use WP_CLI\Process;
+use WP_CLI_Valet\ValetFacade as Valet;
 
 /**
  * Zonda is golden.
@@ -60,6 +61,9 @@ class Valet_Command
      * ## OPTIONS
      * <domain>
      * : Site domain name without TLD.  Eg:  example.com = example
+     *
+     * [--project=<project>]
+     * : Composer project to use instead of vanilla WordPress.
      *
      * [--version=<version>]
      * : WordPress version to install
@@ -164,7 +168,7 @@ class Valet_Command
         $this->progressBar(1);
 
         if ($this->is_secure) {
-            $this->valet("secure $this->site_name");
+            Valet::secure($this->site_name);
         }
 
         // big finale
@@ -318,7 +322,7 @@ class Valet_Command
         $this->args       = $assoc_args;
         $this->site_name  = preg_replace('/^a-zA-Z/', '-', $args[0]);
         $this->is_secure  = ! \WP_CLI\Utils\get_flag_value($assoc_args, 'unsecure');
-        $tld              = $this->valet('domain');
+        $tld              = Valet::domain();
         $this->domain     = "{$this->site_name}.{$tld}";
         $this->full_path  = getcwd() . '/' . $this->site_name;
         $this->full_url   = sprintf('%s://%s',
@@ -361,31 +365,6 @@ class Valet_Command
     }
 
     /**
-     * Execute a command to the system's valet executable
-     *
-     * @param  string $command valet command to run
-     *
-     * @return string
-     */
-    private function valet($command)
-    {
-        static::debug("Running `valet $command`");
-
-        $process = Process::create("valet $command", null, [
-            'PATH' => getenv('PATH'),
-            'HOME' => getenv('HOME'),
-        ])->run();
-
-        if ($process->return_code > 0) {
-            static::debug("valet $command [STDOUT]: $process->stdout");
-            static::debug("valet $command [STDERR]: $process->stderr");
-            WP_CLI::error("There was a problem running \"valet $command\"");
-        }
-
-        return trim($process->stdout);
-    }
-
-    /**
      * Generate a very basic progress bar.
      *
      * @param     $num
@@ -405,7 +384,7 @@ class Valet_Command
     /**
      * @param $message
      */
-    protected static function debug($message)
+    public static function debug($message)
     {
         WP_CLI::debug($message, 'aaemnnosttv/wp-cli-valet-command');
     }
