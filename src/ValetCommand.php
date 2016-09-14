@@ -9,7 +9,7 @@ use WP_CLI_Valet\ValetFacade as Valet;
 /**
  * Zonda is golden.
  */
-class Valet_Command
+class ValetCommand
 {
     /**
      * Associative arguments passed to the command
