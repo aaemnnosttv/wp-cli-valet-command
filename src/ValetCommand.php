@@ -2,9 +2,13 @@
 
 namespace WP_CLI_Valet;
 
+use Illuminate\Container\Container;
 use WP_CLI;
-use WP_CLI\Process;
-use WP_CLI_Valet\ValetFacade as Valet;
+use WP_CLI_Valet\Installer\InstallerInterface;
+use WP_CLI_Valet\Installer\WordPressInstaller;
+use WP_CLI_Valet\Process\FakeValet;
+use WP_CLI_Valet\Process\SystemValet;
+use WP_CLI_Valet\Process\SystemWp;
 
 /**
  * Zonda is golden.
@@ -12,47 +16,31 @@ use WP_CLI_Valet\ValetFacade as Valet;
 class ValetCommand
 {
     /**
-     * Associative arguments passed to the command
-     * @var array
+     * @var Props
      */
-    protected $args;
-    /**
-     * The new site name
-     * @var string
-     */
-    protected $site_name;
-    /**
-     * The full domain of the site
-     * @var string
-     */
-    protected $domain;
-    /**
-     * If the site should be setup with a secure protocol
-     * @var string
-     */
-    protected $is_secure;
-    /**
-     * The full site url
-     * @var string
-     */
-    protected $full_url;
-    /**
-     * The absolute path to the project directory
-     * @var string
-     */
-    protected $full_path;
-    /**
-     * Whether or not to fancify the output
-     * @var bool
-     */
-    protected $show_progress_bar;
+    protected $props;
 
     /**
      * Register the command with WP-CLI.
      */
     public static function register()
     {
-        WP_CLI::add_command('valet', static::class);
+        WP_CLI::add_command('valet', static::class, [
+            'before_invoke' => [static::class, 'boot']
+        ]);
+    }
+
+    /**
+     * Boot the command.
+     */
+    public static function boot()
+    {
+        Container::setInstance($container = new Container);
+
+        $container->singleton('valet', getenv('BEHAT_RUN') ? FakeValet::class : SystemValet::class);
+        $container->singleton('wp', SystemWp::class);
+
+        $container->bind('wp-installer', WordPressInstaller::class);
     }
 
     /**
@@ -62,20 +50,14 @@ class ValetCommand
      * <domain>
      * : Site domain name without TLD.  Eg:  example.com = example
      *
-     * [--project=<project>]
-     * : Composer project to use instead of vanilla WordPress.
-     *
      * [--version=<version>]
      * : WordPress version to install
      * ---
-     * default:
+     * default: latest
      * ---
      *
      * [--locale=<locale>]
      * : Select which language you want to install
-     * ---
-     * default:
-     * ---
      *
      * [--db=<db>]
      * : Database driver
@@ -88,9 +70,6 @@ class ValetCommand
      *
      * [--dbname=<dbname>]
      * : Database name (MySQL only). Default: 'wp_{domain}'
-     * ---
-     * default:
-     * ---
      *
      * [--dbuser=<dbuser>]
      * : Database User (MySQL only)
@@ -124,9 +103,6 @@ class ValetCommand
      *
      * [--admin_email=<email>]
      * : The email to use for the WordPress admin user.
-     * ---
-     * default:
-     * ---
      *
      * [--unsecure]
      * : Provisions the site for http rather than https.
@@ -136,14 +112,19 @@ class ValetCommand
      *
      * @subcommand new
      *
-     * @when before_wp_load
+     * @when       before_wp_load
+     *
+     * @param $args
+     * @param $assoc_args
      */
     public function _new($args, $assoc_args)
     {
         $this->setup_props($args, $assoc_args);
 
-        if (! is_dir($this->full_path) && ! mkdir($this->full_path, 0755, true)) {
-            WP_CLI::error('failed creating directory');
+        $project = $this->props->option('project');
+
+        if (! $installer = $this->getInstaller($project)) {
+            WP_CLI::error("No installer found for project: '$project'");
         }
 
         /**
@@ -151,165 +132,40 @@ class ValetCommand
          * as that would add a new line at the end, which would ruin the effect.
          **/
         echo 'Don\'t go anywhere, this will only take a second! ';
-
         // we can spare .3 sec for a touch of zonda here...
         $this->progressBar(3);
 
-        $this->download_wp();
+        $installer->download();
         $this->progressBar(1);
 
-        $this->configure_wp();
+        $installer->configure();
         $this->progressBar(1);
 
-        $this->create_db();
+        $installer->createDatabase();
         $this->progressBar(1);
 
-        $this->install_wp();
+        $installer->runInstall();
         $this->progressBar(1);
 
-        if ($this->is_secure) {
-            Valet::secure($this->site_name);
+        if ($this->props->isSecure()) {
+            Valet::secure($this->props->domain);
         }
 
         // big finale
         $this->progressBar(10, 50);
         echo "\n";
 
-        WP_CLI::success("$this->site_name ready! $this->full_url");
+        WP_CLI::success("{$this->props->site_name} ready! " . $this->props->fullUrl());
     }
 
     /**
-     * Download WordPress core
-     */
-    protected function download_wp()
-    {
-        static::debug('Downloading WordPress');
-
-        $args = array_filter([
-            'version' => $this->args['version'],
-            'locale'  => $this->args['locale'],
-        ]);
-
-        $this->wp('core download', [], $args);
-    }
-
-    /**
-     * Generate the configuration file
-     */
-    protected function configure_wp()
-    {
-        static::debug('Configuring WP');
-
-        $this->wp('core config', [], [
-            'dbname'   => $this->args['dbname'] ?: "wp_{$this->site_name}",
-            'dbuser'   => $this->args['dbuser'],
-            'dbpass'   => isset($this->args['dbpass']) ? $this->args['dbpass'] : '',
-            'dbprefix' => $this->args['dbprefix'],
-        ]);
-    }
-
-    /**
-     * Create the database
-     */
-    protected function create_db()
-    {
-        if ('sqlite' == $this->args['db']) {
-            $this->create_sqlite_db();
-        } else {
-            $this->create_mysql_db();
-        }
-    }
-
-    /**
-     * Create MySQL database
-     */
-    protected function create_mysql_db()
-    {
-        static::debug('Creating MySQL DB');
-
-        $this->wp('db create');
-    }
-
-    /**
-     * Download and install sqlite-integration
-     */
-    protected function create_sqlite_db()
-    {
-        static::debug('Installing SQLite DB');
-
-        $this->install_sqlite_integration("$this->full_path/wp-content/plugins/");
-
-        copy(
-            "$this->full_path/wp-content/plugins/sqlite-integration/db.php",
-            "$this->full_path/wp-content/db.php"
-        );
-
-        if (! file_exists("$this->full_path/wp-content/db.php")) {
-            WP_CLI::error('sqlite-integration install failed');
-        }
-    }
-
-    /**
-     * Install the sqlite-integration plugin, and database drop-in.
+     * @param $project
      *
-     * We can't just run `plugin install ...' because it requires the database to be setup.
-     *
-     * @param  string $path    The full path to install the plugin to
-     * @param  string|null $version The specific plugin version to install
+     * @return InstallerInterface
      */
-    protected function install_sqlite_integration($path, $version = null)
+    protected function getInstaller($project)
     {
-        /**
-         * If no version is requested, fetch the latest from the api
-         */
-        if (! $version) {
-            $response = json_decode(file_get_contents("https://api.wordpress.org/plugins/info/1.0/sqlite-integration.json"));
-
-            if (! $response) {
-                WP_CLI::error('There was a problem parsing the response from the wordpress.org api. Try again!');
-            }
-
-            $version = $response->version;
-        }
-
-        $cache = WP_CLI::get_cache();
-        $cache_key = "aaemnnosttv/wp-cli-valet-command/sqlite-integration.{$version}.zip";
-        $local_file = "/tmp/sqlite-integration.{$version}.zip";
-
-        if ($cache->has($cache_key)) {
-            static::debug("Using cached file: $cache_key");
-            $cache->export($cache_key, $local_file);
-        } else {
-            file_put_contents($local_file, file_get_contents("https://downloads.wordpress.org/plugin/sqlite-integration.{$version}.zip"));
-
-            WP_CLI::get_cache()->import($cache_key, $local_file);
-        }
-
-        static::debug('Extracting sqlite-integration');
-
-        $zip = new \ZipArchive;
-        $zip->open($local_file);
-        $zip->extractTo("$this->full_path/wp-content/plugins/");
-        $zip->close();
-
-        unlink($local_file);
-    }
-
-    /**
-     * Install WordPress
-     */
-    protected function install_wp()
-    {
-        static::debug('Installing WordPress');
-
-        $this->wp('core install', [], [
-            'url'            => $this->full_url,
-            'title'          => $this->site_name,
-            'admin_user'     => $this->args['admin_user'],
-            'admin_password' => $this->args['admin_password'],
-            'admin_email'    => $this->args['admin_email'] ?: "admin@{$this->domain}",
-            'skip-email'     => true
-        ]);
+        return Container::getInstance()->make("$project-installer");
     }
 
     /**
@@ -319,49 +175,9 @@ class ValetCommand
      */
     protected function setup_props($args, $assoc_args)
     {
-        $this->args       = $assoc_args;
-        $this->site_name  = preg_replace('/^a-zA-Z/', '-', $args[0]);
-        $this->is_secure  = ! \WP_CLI\Utils\get_flag_value($assoc_args, 'unsecure');
-        $tld              = Valet::domain();
-        $this->domain     = "{$this->site_name}.{$tld}";
-        $this->full_path  = getcwd() . '/' . $this->site_name;
-        $this->full_url   = sprintf('%s://%s',
-            $this->is_secure ? 'https' : 'http',
-            $this->domain
-        );
-        $this->show_progress_bar = ! \WP_CLI\Utils\get_flag_value($assoc_args, 'skip-progress');
-    }
-
-    /**
-     * Spawn a new WP-CLI process
-     * @param  string $command     command to run
-     * @param  array  $positional  positional arguments
-     * @param  array  $assoc_args  associative arguments
-     */
-    protected function wp($command, $positional = [], $assoc_args = [])
-    {
-        static::debug("Running 'wp $command' ...");
-
-        $assoc_args['path'] = $this->full_path;
-
-        $php_bin          = WP_CLI::get_php_binary();
-        $script_path      = $GLOBALS[ 'argv' ][ 0 ];
-        $positional       = implode(' ', array_map('escapeshellarg', $positional));
-        $assoc_args       = \WP_CLI\Utils\assoc_args_to_str($assoc_args);
-
-        $process = Process::create("{$php_bin} {$script_path} {$command} {$positional} {$assoc_args}", null, [
-            'HOME'                => getenv('HOME'),
-            'WP_CLI_PACKAGES_DIR' => getenv('WP_CLI_PACKAGES_DIR'),
-            'WP_CLI_CONFIG_PATH'  => getenv('WP_CLI_CONFIG_PATH'),
-        ])->run();
-
-        static::debug("Completed $process->command");
-
-        if ($process->return_code > 0) {
-            WP_CLI::error($process->stderr);
-        }
-
-        static::debug($process->stdout);
+        $this->props = $props = new Props($args, $assoc_args);
+        $props->populate();
+        Container::getInstance()->instance(Props::class, $props);
     }
 
     /**
@@ -372,7 +188,7 @@ class ValetCommand
      */
     protected function progressBar($num, $fractionOfSec = 10)
     {
-        if (! $this->show_progress_bar) {
+        if (! $this->props->showProgress()) {
             return;
         }
         foreach (range(1,$num) as $iteration) {
