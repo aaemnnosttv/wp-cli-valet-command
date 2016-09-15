@@ -2,6 +2,7 @@
 
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
+use WP_CLI\Process;
 
 $steps->Then( '/^the return code should be (\d+)$/',
 	function ( $world, $return_code ) {
@@ -190,3 +191,14 @@ $steps->Then( '/^the (.+) (file|directory) should (exist|not exist|be:|contain:|
 	}
 );
 
+
+$steps->Then('/^the ([^\s]+) database should not exist$/', function($world, $database_name) {
+    $database_name = $world->replace_variables($database_name);
+
+    $process = Process::create("mysql -e 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \"$database_name\";' -uroot")
+        ->run();
+
+    if ($process->stdout) {
+        throw new Exception("Failed to assert that no database exists with the name '$database_name'");
+    }
+});

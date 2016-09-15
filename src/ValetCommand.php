@@ -3,6 +3,8 @@
 namespace WP_CLI_Valet;
 
 use Illuminate\Container\Container;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use WP_CLI;
 use WP_CLI_Valet\Installer\BedrockInstaller;
 use WP_CLI_Valet\Installer\InstallerInterface;
@@ -169,6 +171,55 @@ class ValetCommand
         echo "\n";
 
         WP_CLI::success("{$this->props->site_name} ready! " . $this->props->fullUrl());
+    }
+
+    /**
+     * Blow away an installation.
+     *
+     * ## OPTIONS
+     *
+     * <name>
+     * : Site domain name without TLD.  Eg:  example.com = example
+     *
+     * @when       before_wp_load
+     *
+     * @param $args
+     * @param $assoc_args
+     */
+    public function destroy($args, $assoc_args)
+    {
+        $this->setup_props($args, $assoc_args);
+
+        $project_abspath = $this->props->fullPath();
+
+        if (! is_dir($project_abspath)) {
+            WP_CLI::error("No install exists at $project_abspath");
+        }
+
+        WP::db_drop(['path' => $project_abspath, 'yes' => true]);
+
+        Valet::unsecure($this->props->site_name);
+
+        $this->rm_rf($project_abspath);
+
+        if (! is_dir($project_abspath)) {
+            WP_CLI::success("{$this->props->site_name} was destroyed.");
+        }
+    }
+
+    protected function rm_rf($abspath)
+    {
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($abspath, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($files as $fileinfo) {
+            $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+            $todo($fileinfo->getRealPath());
+        }
+
+        rmdir($abspath);
     }
 
     /**

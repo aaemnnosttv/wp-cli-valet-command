@@ -7,8 +7,8 @@ namespace WP_CLI_Valet;
  * @package WP_CLI_Valet
  *
  * @method static domain
- * @method static secure(string $full_path)
- * @method static unsecure(string $full_path)
+ * @method static secure(string $name)
+ * @method static unsecure(string $name)
  */
 class Valet extends Facade
 {
