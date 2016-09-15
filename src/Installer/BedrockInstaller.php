@@ -19,7 +19,8 @@ class BedrockInstaller extends WordPressInstaller
         $process = Process::create("composer create-project --no-interaction roots/bedrock {$this->props->site_name}",
             dirname($this->props->fullPath()),
             [
-                'HOME' => getenv('HOME')
+                'HOME' => getenv('HOME'),
+                'PATH' => getenv('PATH'),
             ]
         )->run();
 
@@ -68,7 +69,8 @@ class BedrockInstaller extends WordPressInstaller
         $process = Process::create('composer require --no-interaction wpackagist-plugin/sqlite-integration',
             $this->props->fullPath(),
             [
-                'HOME' => getenv('HOME')
+                'HOME' => getenv('HOME'),
+                'PATH' => getenv('PATH'),
             ]
         )->run();
 
