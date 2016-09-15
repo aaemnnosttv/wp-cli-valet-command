@@ -155,3 +155,7 @@ $steps->Given('/^a misconfigured WP_CONTENT_DIR constant directory$/',
         file_put_contents( $wp_config_path, $wp_config_code );
     }
 );
+
+$steps->Given('/^a random project name as {PROJECT}$/', function($world) {
+    $world->variables[ 'PROJECT' ] = uniqid('valet-test-');
+});
