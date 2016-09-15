@@ -161,7 +161,7 @@ class ValetCommand
         $this->progressBar(1);
 
         if ($this->props->isSecure()) {
-            Valet::secure($this->props->domain);
+            Valet::secure($this->props->site_name);
         }
 
         // big finale
