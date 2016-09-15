@@ -40,11 +40,19 @@ class Props
     /**
      * Get the absolute file path to the root directory of the install.
      *
+     * @param string $relative  A path relative to the project root.
+     *
      * @return string
      */
-    public function fullPath()
+    public function fullPath($relative = '')
     {
-        return getcwd() . '/' . $this->site_name;
+        $parts = array_filter([
+            $this->option('path', getcwd()),
+            $this->site_name,
+            $relative
+        ]);
+
+        return implode('/', $parts);
     }
 
     /**
