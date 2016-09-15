@@ -4,22 +4,26 @@
     "keywords": ["wordpress", "laravel", "valet", "zonda"],
     "license": "MIT",
     "authors": [
-      {
-        "name": "Evan Mattson",
-        "email": "me@aaemnnost.tv",
-        "homepage": "https://aaemnnost.tv"
-      }
+        {
+            "name": "Evan Mattson",
+            "email": "me@aaemnnost.tv",
+            "homepage": "https://aaemnnost.tv"
+        }
     ],
     "homepage": "https://github.com/aaemnnosttv/wp-cli-valet-command",
     "support": {
-      "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
+        "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
     },
     "autoload": {
-      "psr-4": {"WP_CLI_Valet\\": "src"},
-      "files": ["command.php"]
+        "psr-4": {
+            "WP_CLI_Valet\\": "src"
+        },
+        "files": [
+            "command.php"
+        ]
     },
     "require": {
-      "php": "^5.5|^7.0"
+        "php": "^5.5|^7.0",
     },
     "require-dev": {
         "wp-cli/wp-cli": "^0.24.1",
