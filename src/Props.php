@@ -37,6 +37,16 @@ class Props
         $this->domain    = sprintf('%s.%s', $this->site_name, Valet::domain());
     }
 
+    public function databaseName()
+    {
+        return $this->option('dbname', "wp_{$this->site_name}");
+    }
+
+    public function databasePassword()
+    {
+        return $this->option('dbpass', '');
+    }
+
     /**
      * Get the absolute file path to the root directory of the install.
      *

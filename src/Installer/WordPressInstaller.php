@@ -51,9 +51,9 @@ class WordPressInstaller implements InstallerInterface
     public function configure()
     {
         $args = [
-            'dbname'   => $this->props->option('dbname', "wp_{$this->props->site_name}"),
+            'dbname'   => $this->props->databaseName(),
             'dbuser'   => $this->props->option('dbuser'),
-            'dbpass'   => $this->props->option('dbpass', ''),
+            'dbpass'   => $this->props->databasePassword(),
             'dbprefix' => $this->props->option('dbprefix'),
         ];
 
