@@ -22,6 +22,8 @@
       "php": "^5.5|^7.0"
     },
     "require-dev": {
-        "wp-cli/wp-cli": "^0.24.1"
+        "wp-cli/wp-cli": "^0.24.1",
+        "behat/behat": "~2.5",
+        "johnpbloch/wordpress": "^4.6"
     }
 }
