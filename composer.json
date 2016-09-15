@@ -24,6 +24,7 @@
     },
     "require": {
         "php": "^5.5|^7.0",
+        "illuminate/container": "~5.1"
     },
     "require-dev": {
         "wp-cli/wp-cli": "^0.24.1",
