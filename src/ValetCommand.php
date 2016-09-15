@@ -4,6 +4,7 @@ namespace WP_CLI_Valet;
 
 use Illuminate\Container\Container;
 use WP_CLI;
+use WP_CLI_Valet\Installer\BedrockInstaller;
 use WP_CLI_Valet\Installer\InstallerInterface;
 use WP_CLI_Valet\Installer\WordPressInstaller;
 use WP_CLI_Valet\Process\FakeValet;
@@ -41,6 +42,7 @@ class ValetCommand
         $container->singleton('wp', SystemWp::class);
 
         $container->bind('wp-installer', WordPressInstaller::class);
+        $container->bind('bedrock-installer', BedrockInstaller::class);
     }
 
     /**
@@ -49,6 +51,15 @@ class ValetCommand
      * ## OPTIONS
      * <domain>
      * : Site domain name without TLD.  Eg:  example.com = example
+     *
+     * [--project=<project>]
+     * : Composer project to use instead of vanilla WordPress.
+     * ---
+     * default: wp
+     * options:
+     *   - wp
+     *   - bedrock
+     * ---
      *
      * [--version=<version>]
      * : WordPress version to install
@@ -126,6 +137,8 @@ class ValetCommand
         if (! $installer = $this->getInstaller($project)) {
             WP_CLI::error("No installer found for project: '$project'");
         }
+
+        static::debug(sprintf('Installing using %s', get_class($installer)));
 
         /**
          * Here we are going to emulate a progress bar, so we don't use WP_CLI::line
