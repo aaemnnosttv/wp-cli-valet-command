@@ -10,6 +10,7 @@ use WP_CLI_Valet\Installer\BedrockInstaller;
 use WP_CLI_Valet\Installer\InstallerInterface;
 use WP_CLI_Valet\Installer\WordPressInstaller;
 use WP_CLI_Valet\Process\FakeValet;
+use WP_CLI_Valet\Process\SystemComposer;
 use WP_CLI_Valet\Process\SystemValet;
 use WP_CLI_Valet\Process\SystemWp;
 
@@ -42,6 +43,7 @@ class ValetCommand
 
         $container->singleton('valet', getenv('BEHAT_RUN') ? FakeValet::class : SystemValet::class);
         $container->singleton('wp', SystemWp::class);
+        $container->singleton('composer', SystemComposer::class);
 
         $container->bind('wp-installer', WordPressInstaller::class);
         $container->bind('bedrock-installer', BedrockInstaller::class);
