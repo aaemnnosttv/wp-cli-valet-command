@@ -7,6 +7,10 @@ use WP_CLI_Valet\Props;
 use WP_CLI_Valet\ValetCommand as Command;
 use WP_CLI_Valet\WP;
 
+/**
+ * Class WordPressInstaller
+ * @package WP_CLI_Valet\Installer
+ */
 class WordPressInstaller implements InstallerInterface
 {
     /**
@@ -14,6 +18,9 @@ class WordPressInstaller implements InstallerInterface
      */
     protected $props;
 
+    /**
+     * @var string
+     */
     protected $contentDir = 'wp-content';
 
     /**
@@ -62,6 +69,9 @@ class WordPressInstaller implements InstallerInterface
         ]);
     }
 
+    /**
+     * Create the database for the install.
+     */
     public function createDatabase()
     {
         if ('sqlite' == $this->props->option('db')) {
@@ -71,6 +81,9 @@ class WordPressInstaller implements InstallerInterface
         }
     }
 
+    /**
+     * Create a MySql database for the install.
+     */
     protected function createMySql()
     {
         Command::debug('Creating MySQL DB');
@@ -78,6 +91,9 @@ class WordPressInstaller implements InstallerInterface
         WP::db('create');
     }
 
+    /**
+     * Install the sqlite plugin and database drop-in.
+     */
     public function createSqlite()
     {
         Command::debug('Installing SQLite DB');
@@ -116,7 +132,7 @@ class WordPressInstaller implements InstallerInterface
     /**
      * Install the sqlite-integration plugin, and database drop-in.
      *
-     * We can't just run `plugin install ...' because it requires the database to be setup.
+     * We can't just run `plugin install ...' because it requires the database to be initialized.
      *
      * @param  string|null $version The specific plugin version to install
      */
@@ -158,6 +174,13 @@ class WordPressInstaller implements InstallerInterface
         unlink($local_file);
     }
 
+    /**
+     * Get the absolute path to the content directory, optionally combined with the given relative path.
+     *
+     * @param string $relative
+     *
+     * @return string
+     */
     protected function contentPath($relative = '')
     {
         $path = array_filter([
