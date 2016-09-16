@@ -189,6 +189,7 @@ class ValetCommand
     public function destroy($args, $assoc_args)
     {
         $this->setup_props($args, $assoc_args);
+        static::debug("Preparing to destroy {$this->props->site_name}.");
 
         $project_abspath = $this->props->fullPath();
 
@@ -196,17 +197,25 @@ class ValetCommand
             WP_CLI::error("No install exists at $project_abspath");
         }
 
-        WP::db_drop(['path' => $project_abspath, 'yes' => true]);
+        static::debug('Dropping database...');
+        WP::db('drop', ['path' => $project_abspath, 'yes' => true]);
 
+        static::debug('Removing any TLS certificate for this install...');
         Valet::unsecure($this->props->site_name);
 
-        $this->rm_rf($project_abspath);
-
-        if (! is_dir($project_abspath)) {
+        static::debug('Removing all files...');
+        if ($this->rm_rf($project_abspath)) {
             WP_CLI::success("{$this->props->site_name} was destroyed.");
         }
     }
 
+    /**
+     * Recursively delete all files and directories within (and including) the given path.
+     *
+     * @param $abspath
+     *
+     * @return bool
+     */
     protected function rm_rf($abspath)
     {
         $files = new RecursiveIteratorIterator(
@@ -219,7 +228,7 @@ class ValetCommand
             $todo($fileinfo->getRealPath());
         }
 
-        rmdir($abspath);
+        return rmdir($abspath);
     }
 
     /**
