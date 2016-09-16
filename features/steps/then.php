@@ -154,25 +154,26 @@ $steps->Then( '/^the (.+) (file|directory) should (exist|not exist|be:|contain:|
 		if ( '/' !== $path[0] )
 			$path = $world->variables['RUN_DIR'] . "/$path";
 
-		if ( 'file' == $type ) {
-			$test = 'file_exists';
-		} else if ( 'directory' == $type ) {
-			$test = 'is_dir';
-		}
+		$exists = function ($path) use ($type) {
+		    if ('directory' == $type) {
+		        return file_exists($path) && is_dir($path);
+            }
+            return file_exists($path);
+        };
 
 		switch ( $action ) {
 		case 'exist':
-			if ( ! $test( $path ) ) {
+			if ( ! $exists( $path ) ) {
 				throw new Exception( $world->result );
 			}
 			break;
 		case 'not exist':
-			if ( $test( $path ) ) {
+			if ( $exists( $path ) ) {
 				throw new Exception( $world->result );
 			}
 			break;
 		default:
-			if ( ! $test( $path ) ) {
+			if ( ! $exists( $path ) ) {
 				throw new Exception( "$path doesn't exist." );
 			}
 			$action = substr( $action, 0, -1 );
