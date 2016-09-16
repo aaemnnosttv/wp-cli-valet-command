@@ -192,14 +192,18 @@ $steps->Then( '/^the (.+) (file|directory) should (exist|not exist|be:|contain:|
 	}
 );
 
-
-$steps->Then('/^the ([^\s]+) database should not exist$/', function($world, $database_name) {
+$steps->Then('/^the ([^\s]+) database should( not)? exist$/', function($world, $database_name, $should_not_exist = false) {
     $database_name = $world->replace_variables($database_name);
 
     $process = Process::create("mysql -e 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \"$database_name\";' -uroot")
         ->run();
 
-    if ($process->stdout) {
+    $exists = strlen(trim($process->stdout)) > 0;
+    $should_exist = ! $should_not_exist;
+
+    if ($exists && $should_not_exist) {
         throw new Exception("Failed to assert that no database exists with the name '$database_name'");
+    } elseif (! $exists && $should_exist) {
+        throw new Exception("Failed to assert that a database exists with the name '$database_name'");
     }
 });
