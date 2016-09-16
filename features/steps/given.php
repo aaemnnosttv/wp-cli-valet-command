@@ -159,3 +159,7 @@ $steps->Given('/^a misconfigured WP_CONTENT_DIR constant directory$/',
 $steps->Given('/^a random project name as {PROJECT}$/', function($world) {
     $world->variables[ 'PROJECT' ] = uniqid('valet-test-');
 });
+
+$steps->Given('/^a random string as {(\w+)}$/', function($world, $var_name) {
+    $world->variables[ $var_name ] = substr(md5(uniqid('', true)), 0, 8);
+});
