@@ -25,7 +25,7 @@ class SystemValet extends ShellCommand implements ValetInterface
      */
     public function secure($domain)
     {
-        return $this->run('secure', $domain);
+        return $this->run('secure', [$domain]);
     }
 
     /**
@@ -37,6 +37,6 @@ class SystemValet extends ShellCommand implements ValetInterface
      */
     public function unsecure($domain)
     {
-        return $this->run('unsecure', $domain);
+        return $this->run('unsecure', [$domain]);
     }
 }
