@@ -2,11 +2,9 @@
 
 namespace WP_CLI_Valet\Process;
 
-use WP_CLI;
-use WP_CLI\Process;
-
-class SystemValet implements ValetInterface
+class SystemValet extends ShellCommand implements ValetInterface
 {
+    protected $command = 'valet';
 
     /**
      * Get the local domain served by Valet.
@@ -27,7 +25,7 @@ class SystemValet implements ValetInterface
      */
     public function secure($domain)
     {
-        return $this->run("secure $domain");
+        return $this->run('secure', $domain);
     }
 
     /**
@@ -39,29 +37,6 @@ class SystemValet implements ValetInterface
      */
     public function unsecure($domain)
     {
-        return $this->run("unsecure $domain");
-    }
-
-    /**
-     * Run a valet command
-     *
-     * @param string $command the sub-command to execute
-     *
-     * @return string
-     */
-    protected function run($command)
-    {
-        $process = Process::create("valet $command", null, [
-            'PATH' => getenv('PATH'),
-            'HOME' => getenv('HOME'),
-        ])->run();
-
-        if ($process->return_code > 0) {
-            WP_CLI::debug("valet $command [STDOUT]: $process->stdout", __CLASS__);
-            WP_CLI::debug("valet $command [STDERR]: $process->stderr", __CLASS__);
-            WP_CLI::error("There was a problem running \"valet $command\"");
-        }
-
-        return trim($process->stdout);
+        return $this->run('unsecure', $domain);
     }
 }
