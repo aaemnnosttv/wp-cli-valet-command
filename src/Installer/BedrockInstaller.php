@@ -7,6 +7,8 @@ use WP_CLI_Valet\ValetCommand as Command;
 
 class BedrockInstaller extends WordPressInstaller
 {
+    use ComposerRequireSqliteIntegration;
+
     protected $contentDir = 'web/app';
 
     /**
@@ -52,22 +54,5 @@ class BedrockInstaller extends WordPressInstaller
         );
 
         file_put_contents($this->props->fullPath('.env'), $env);
-    }
-
-    /**
-     * Install the sqlite plugin.
-     *
-     * @param string|null $version
-     */
-    public function installSqliteIntegration($version = null)
-    {
-        Command::debug('Requiring sqlite-integration with Composer.');
-
-        $process = Composer::_require('wpackagist-plugin/sqlite-integration', [
-            'working-dir'    => $this->props->fullPath(),
-            'no-interaction' => true,
-        ]);
-
-        Command::debug((string) $process);
     }
 }
