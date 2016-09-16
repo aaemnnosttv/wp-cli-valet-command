@@ -2,7 +2,7 @@
 
 namespace WP_CLI_Valet\Installer;
 
-use WP_CLI\Process;
+use WP_CLI_Valet\Composer;
 use WP_CLI_Valet\ValetCommand as Command;
 
 class BedrockInstaller extends WordPressInstaller
@@ -16,13 +16,10 @@ class BedrockInstaller extends WordPressInstaller
     {
         Command::debug('Installing Bedrock via Composer');
 
-        $process = Process::create("composer create-project --no-interaction roots/bedrock {$this->props->site_name}",
-            dirname($this->props->fullPath()),
-            [
-                'HOME' => getenv('HOME'),
-                'PATH' => getenv('PATH'),
-            ]
-        )->run();
+        $process = Composer::createProject('roots/bedrock', $this->props->site_name, [
+            'working-dir'    => dirname($this->props->fullPath()),
+            'no-interaction' => true,
+        ]);
 
         Command::debug((string) $process);
     }
@@ -66,13 +63,10 @@ class BedrockInstaller extends WordPressInstaller
     {
         Command::debug('Requiring sqlite-integration with Composer.');
 
-        $process = Process::create('composer require --no-interaction wpackagist-plugin/sqlite-integration',
-            $this->props->fullPath(),
-            [
-                'HOME' => getenv('HOME'),
-                'PATH' => getenv('PATH'),
-            ]
-        )->run();
+        $process = Composer::_require('wpackagist-plugin/sqlite-integration', [
+            'working-dir'    => $this->props->fullPath(),
+            'no-interaction' => true,
+        ]);
 
         Command::debug((string) $process);
     }
