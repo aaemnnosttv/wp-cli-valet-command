@@ -13,7 +13,7 @@ class SystemValet extends ShellCommand implements ValetInterface
      */
     public function domain()
     {
-        return $this->run('domain');
+        return trim($this->run('domain')->stdout);
     }
 
     /**
