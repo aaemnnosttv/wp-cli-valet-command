@@ -44,7 +44,7 @@ class WordPressInstaller implements InstallerInterface
             mkdir($full_path, 0755, true);
         }
 
-        WP::core_download($args);
+        WP::core('download', $args);
     }
 
     /**
@@ -54,14 +54,12 @@ class WordPressInstaller implements InstallerInterface
      */
     public function configure()
     {
-        $args = [
+        WP::core('config', [
             'dbname'   => $this->props->databaseName(),
             'dbuser'   => $this->props->option('dbuser'),
             'dbpass'   => $this->props->databasePassword(),
             'dbprefix' => $this->props->option('dbprefix'),
-        ];
-
-        WP::core_config($args);
+        ]);
     }
 
     public function createDatabase()
@@ -77,7 +75,7 @@ class WordPressInstaller implements InstallerInterface
     {
         Command::debug('Creating MySQL DB');
 
-        WP::db_create();
+        WP::db('create');
     }
 
     public function createSqlite()
@@ -105,7 +103,7 @@ class WordPressInstaller implements InstallerInterface
     {
         Command::debug('Installing WordPress');
 
-        WP::core_install([
+        WP::core('install', [
             'url'            => $this->props->fullUrl(),
             'title'          => $this->props->site_name,
             'admin_user'     => $this->props->option('admin_user'),
