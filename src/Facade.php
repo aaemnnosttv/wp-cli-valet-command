@@ -28,6 +28,7 @@ abstract class Facade
     public static function __callStatic($method, $arguments)
     {
         $instance = Container::getInstance()->make(static::getContainerKey());
+        $method = trim($method, '_');
 
         if (! method_exists($instance, $method) && ! method_exists($instance, '__call')) {
             throw new BadMethodCallException("Method '$method' does not exist.'");
