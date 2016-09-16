@@ -181,6 +181,9 @@ class ValetCommand
      * <name>
      * : Site domain name without TLD.  Eg:  example.com = example
      *
+     * [--yes]
+     * : Pre-approve the confirmation to delete all files and drop database.
+     *
      * @when       before_wp_load
      *
      * @param $args
@@ -190,6 +193,8 @@ class ValetCommand
     {
         $this->setup_props($args, $assoc_args);
         static::debug("Preparing to destroy {$this->props->site_name}.");
+
+        WP_CLI::confirm('This will delete all files and drop the database for the install. Are you sure?', $assoc_args);
 
         $project_abspath = $this->props->fullPath();
 
