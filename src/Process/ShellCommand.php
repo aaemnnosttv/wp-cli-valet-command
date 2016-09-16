@@ -3,6 +3,7 @@
 namespace WP_CLI_Valet\Process;
 
 use WP_CLI\Process;
+use WP_CLI_Valet\ValetCommand as Command;
 
 class ShellCommand
 {
@@ -46,9 +47,12 @@ class ShellCommand
     {
         $positional = \WP_CLI\Utils\args_to_str($positional);
         $assoc      = \WP_CLI\Utils\assoc_args_to_str($assoc);
+        $run_command = $this->rootCommand() . " $command $positional $assoc";
+
+        Command::debug("Running: $run_command");
 
         return Process::create(
-            $this->rootCommand() . " $command $positional $assoc",
+            $run_command,
             $this->getCwd(),
             $this->getEnv()
         )->run();
