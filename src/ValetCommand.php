@@ -239,7 +239,8 @@ class ValetCommand
     }
 
     /**
-     * Setup properties based on command arguments
+     * Setup properties based on command arguments.
+     *
      * @param  array $args          positional arguments
      * @param  array $assoc_args    associative arguments
      */

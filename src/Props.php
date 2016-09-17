@@ -37,11 +37,21 @@ class Props
         $this->domain    = sprintf('%s.%s', $this->site_name, Valet::domain());
     }
 
+    /**
+     * Get the database name as specified by the user, or fallback to a sensible default.
+     *
+     * @return string
+     */
     public function databaseName()
     {
         return $this->option('dbname', "wp_{$this->site_name}");
     }
 
+    /**
+     * Get the database name as specified by the user, or fallback to an empty string.
+     *
+     * @return string
+     */
     public function databasePassword()
     {
         return $this->option('dbpass', '');
