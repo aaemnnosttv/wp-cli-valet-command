@@ -57,7 +57,9 @@ class ShellCommand
             $this->getEnv()
         )->run();
 
-        Command::debug((string) $result);
+        $result->caller = static::class;
+
+        Command::debug($result);
 
         if ($result->return_code > 0) {
             throw new \RuntimeException($result->stderr);
