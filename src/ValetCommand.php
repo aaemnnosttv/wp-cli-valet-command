@@ -223,7 +223,7 @@ class ValetCommand
     {
         (new Filesystem())->remove($abspath);
 
-        return file_exists($abspath);
+        return ! file_exists($abspath);
     }
 
     /**
