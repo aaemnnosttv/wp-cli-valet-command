@@ -48,6 +48,26 @@ class Props
     }
 
     /**
+     * Get the absolute path to the project's root directory.
+     * 
+     * @return string
+     */
+    public function projectRoot()
+    {
+        return $this->fullPath();
+    }
+
+    /**
+     * Get the absolute path to the root install's parent directory.
+     *
+     * @return string
+     */
+    public function parentDirectory()
+    {
+        return dirname($this->fullPath());
+    }
+
+    /**
      * Get the absolute file path to the root directory of the install.
      *
      * @param string $relative  A path relative to the project root.
