@@ -154,7 +154,7 @@ class ValetCommand
             $installer->createDatabase();
             $installer->runInstall();
         } catch (\Exception $e) {
-            WP_CLI::error(preg_replace('/^Error: /', '', $e->getMessage()));
+            $this->exceptionHandler($e);
         }
 
         if ($this->props->isSecure()) {
@@ -193,11 +193,15 @@ class ValetCommand
 
         WP_CLI::confirm('This will delete all files and drop the database for the install. Are you sure?', $assoc_args);
 
-        static::debug('Dropping database...');
-        WP::db('drop', ['path' => $project_abspath, 'yes' => true]);
+        try {
+            static::debug('Dropping database...');
+            WP::db('drop', ['yes' => true]);
 
-        static::debug('Removing any TLS certificate for this install...');
-        Valet::unsecure($this->props->site_name);
+            static::debug('Removing any TLS certificate for this install...');
+            Valet::unsecure($this->props->site_name);
+        } catch (\Exception $e) {
+            $this->exceptionHandler($e);
+        }
 
         static::debug('Removing all files...');
         if ($this->rm_rf($project_abspath)) {
@@ -281,5 +285,13 @@ class ValetCommand
     public static function resolve($abstract)
     {
         return static::container()->make($abstract);
+    }
+
+    /**
+     * @param $e
+     */
+    protected function exceptionHandler($e)
+    {
+        WP_CLI::error(preg_replace('/^Error: /', '', $e->getMessage()));
     }
 }
