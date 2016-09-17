@@ -10,8 +10,10 @@ trait ComposerRequireSqliteIntegration
 {
     /**
      * Install the sqlite plugin.
+     *
+     * @param string|null $version
      */
-    public function installSqliteIntegration()
+    public function installSqliteIntegration($version = null)
     {
         Command::debug('Requiring sqlite-integration with Composer.');
 
