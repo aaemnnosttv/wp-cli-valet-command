@@ -51,11 +51,19 @@ class ShellCommand
 
         Command::debug("Running: $run_command");
 
-        return Process::create(
+        $result = Process::create(
             $run_command,
             $this->getCwd(),
             $this->getEnv()
         )->run();
+
+        Command::debug((string) $result);
+
+        if ($result->return_code > 0) {
+            throw new \RuntimeException($result->stderr);
+        }
+
+        return $result;
     }
 
     protected function rootCommand()
