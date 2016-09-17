@@ -195,7 +195,11 @@ class ValetCommand
         try {
             static::debug('Dropping database...');
             WP::db('drop', ['yes' => true]);
+        } catch (\Exception $e) {
+            WP_CLI::warning('The database was unable to be dropped. Disregard this warning if using sqlite for this site.');
+        }
 
+        try {
             static::debug('Removing any TLS certificate for this install...');
             Valet::unsecure($this->props->site_name);
         } catch (\Exception $e) {
