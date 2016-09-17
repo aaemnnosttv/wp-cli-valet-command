@@ -25,6 +25,11 @@ class ValetCommand
     protected $props;
 
     /**
+     * @var Container
+     */
+    protected static $container;
+
+    /**
      * Register the command with WP-CLI.
      */
     public static function register()
@@ -39,7 +44,7 @@ class ValetCommand
      */
     public static function boot()
     {
-        Container::setInstance($container = new Container);
+        static::$container = $container = new Container;
 
         $container->singleton('valet', getenv('BEHAT_RUN') ? FakeValet::class : SystemValet::class);
         $container->singleton('wp', SystemWp::class);
@@ -245,7 +250,7 @@ class ValetCommand
      */
     protected function getInstaller($project)
     {
-        return Container::getInstance()->make("$project-installer");
+        return $this->resolve("$project-installer");
     }
 
     /**
@@ -257,7 +262,7 @@ class ValetCommand
     {
         $this->props = $props = new Props($args, $assoc_args);
         $props->populate();
-        Container::getInstance()->instance(Props::class, $props);
+        $this->container()->instance(Props::class, $props);
     }
 
     /**

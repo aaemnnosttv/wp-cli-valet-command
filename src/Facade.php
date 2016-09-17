@@ -4,7 +4,7 @@ namespace WP_CLI_Valet;
 
 use BadMethodCallException;
 use Exception;
-use Illuminate\Container\Container;
+use WP_CLI_Valet\ValetCommand as Command;
 
 abstract class Facade
 {
@@ -27,7 +27,7 @@ abstract class Facade
      */
     public static function __callStatic($method, $arguments)
     {
-        $instance = Container::getInstance()->make(static::getContainerKey());
+        $instance = Command::resolve(static::getContainerKey());
         $method = trim($method, '_');
 
         if (! method_exists($instance, $method) && ! method_exists($instance, '__call')) {
