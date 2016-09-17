@@ -127,9 +127,6 @@ class ValetCommand
      * [--unsecure]
      * : Provisions the site for http rather than https.
      *
-     * [--skip-progress]
-     * : Disable the progress bar, gain .1sec
-     *
      * @subcommand new
      *
      * @when       before_wp_load
@@ -149,33 +146,21 @@ class ValetCommand
 
         static::debug(sprintf('Installing using %s', get_class($installer)));
 
-        /**
-         * Here we are going to emulate a progress bar, so we don't use WP_CLI::line
-         * as that would add a new line at the end, which would ruin the effect.
-         **/
-        echo 'Don\'t go anywhere, this will only take a second! ';
-        // we can spare .3 sec for a touch of zonda here...
-        $this->progressBar(3);
+        WP_CLI::line("Don't go anywhere, this should only take a second...");
 
-        $installer->download();
-        $this->progressBar(1);
-
-        $installer->configure();
-        $this->progressBar(1);
-
-        $installer->createDatabase();
-        $this->progressBar(1);
-
-        $installer->runInstall();
-        $this->progressBar(1);
+        try {
+            $installer->download();
+            $installer->configure();
+            $installer->createDatabase();
+            $installer->runInstall();
+        } catch (\Exception $e) {
+            WP_CLI::error(preg_replace('/^Error: /', '', $e->getMessage()));
+        }
 
         if ($this->props->isSecure()) {
             Valet::secure($this->props->site_name);
         }
 
-        // big finale
-        $this->progressBar(10, 50);
-        echo "\n";
 
         WP_CLI::success("{$this->props->site_name} ready! " . $this->props->fullUrl());
     }
@@ -266,27 +251,32 @@ class ValetCommand
     }
 
     /**
-     * Generate a very basic progress bar.
-     *
-     * @param     $num
-     * @param int $fractionOfSec
-     */
-    protected function progressBar($num, $fractionOfSec = 10)
-    {
-        if (! $this->props->showProgress()) {
-            return;
-        }
-        foreach (range(1,$num) as $iteration) {
-            echo '.';
-            usleep(1000000 / $fractionOfSec);
-        }
-    }
-
-    /**
      * @param $message
      */
     public static function debug($message)
     {
         WP_CLI::debug($message, 'aaemnnosttv/wp-cli-valet-command');
+    }
+
+    /**
+     * Get the IoC container instance for the command.
+     *
+     * @return Container
+     */
+    public static function container()
+    {
+        return static::$container;
+    }
+
+    /**
+     * Resolve an instance from the container.
+     *
+     * @param $abstract
+     *
+     * @return mixed
+     */
+    public static function resolve($abstract)
+    {
+        return static::container()->make($abstract);
     }
 }
