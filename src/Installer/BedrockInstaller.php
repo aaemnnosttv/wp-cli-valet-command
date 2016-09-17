@@ -18,12 +18,10 @@ class BedrockInstaller extends WordPressInstaller
     {
         Command::debug('Installing Bedrock via Composer');
 
-        $process = Composer::createProject('roots/bedrock', $this->props->site_name, [
-            'working-dir'    => dirname($this->props->fullPath()),
+        Composer::createProject('roots/bedrock', $this->props->site_name, [
+            'working-dir'    => $this->props->parentDirectory(),
             'no-interaction' => true,
         ]);
-
-        Command::debug((string) $process);
     }
 
     /**
@@ -33,9 +31,9 @@ class BedrockInstaller extends WordPressInstaller
     {
         Command::debug('Configuring .env');
 
-        $env = file_get_contents($this->props->fullPath('.env.example'));
+        $env_file_path = $this->props->fullPath('.env.example');
 
-        $env = str_replace(
+        $env_contents = str_replace(
             [
                 'database_name',
                 'database_user',
@@ -50,9 +48,9 @@ class BedrockInstaller extends WordPressInstaller
                 $this->props->option('dbhost', 'localhost'),
                 $this->props->fullUrl(),
             ],
-            $env
+            file_get_contents($env_file_path)
         );
 
-        file_put_contents($this->props->fullPath('.env'), $env);
+        file_put_contents($env_file_path, $env_contents);
     }
 }
