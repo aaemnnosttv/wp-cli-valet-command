@@ -251,11 +251,14 @@ class ValetCommand
     }
 
     /**
-     * @param $message
+     * @param mixed ..$message
      */
-    public static function debug($message)
+    public static function debug()
     {
-        WP_CLI::debug($message, 'aaemnnosttv/wp-cli-valet-command');
+        foreach (func_get_args() as $arg) {
+            $message = is_scalar($arg) ? $arg : print_r($arg, true);
+            WP_CLI::debug($message, 'aaemnnosttv/wp-cli-valet-command');
+        }
     }
 
     /**
