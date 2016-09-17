@@ -119,16 +119,6 @@ class Props
     }
 
     /**
-     * Whether or not to show the progress bar while installing.
-     *
-     * @return bool
-     */
-    public function showProgress()
-    {
-        return ! $this->option('skip-progress');
-    }
-
-    /**
      * Get an option value by name.
      *
      * @param      $name
