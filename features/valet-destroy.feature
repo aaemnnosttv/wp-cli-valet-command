@@ -3,11 +3,15 @@ Feature: It can completely erase an installation.
   Scenario: It erases a regular WordPress install w/ MySql and https.
     Given a random string as {INSTALL}
     And a WP install in '{INSTALL}'
+    And a session file:
+      """
+      n
+      """
 
     Then the {INSTALL}/wp-config.php file should exist
     And the wp_cli_test database should exist
 
-    When I try `wp valet destroy {INSTALL}`
+    When I try `wp valet destroy {INSTALL} < session`
     Then STDOUT should contain:
       """
       This will delete all files and drop the database for the install. Are you sure?
