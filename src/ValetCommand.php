@@ -184,15 +184,15 @@ class ValetCommand
     public function destroy($args, $assoc_args)
     {
         $this->setup_props($args, $assoc_args);
-        static::debug("Preparing to destroy {$this->props->site_name}.");
-
-        WP_CLI::confirm('This will delete all files and drop the database for the install. Are you sure?', $assoc_args);
-
-        $project_abspath = $this->props->fullPath();
+        $project_abspath = $this->props->projectRoot();
 
         if (! is_dir($project_abspath)) {
             WP_CLI::error("No install exists at $project_abspath");
         }
+
+        static::debug("Preparing to destroy {$this->props->site_name}.");
+
+        WP_CLI::confirm('This will delete all files and drop the database for the install. Are you sure?', $assoc_args);
 
         static::debug('Dropping database...');
         WP::db('drop', ['path' => $project_abspath, 'yes' => true]);
