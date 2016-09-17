@@ -3,8 +3,7 @@
 namespace WP_CLI_Valet;
 
 use Illuminate\Container\Container;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Symfony\Component\Filesystem\Filesystem;
 use WP_CLI;
 use WP_CLI_Valet\Installer\BedrockInstaller;
 use WP_CLI_Valet\Installer\InstallerInterface;
@@ -218,17 +217,9 @@ class ValetCommand
      */
     protected function rm_rf($abspath)
     {
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($abspath, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
+        (new Filesystem())->remove($abspath);
 
-        foreach ($files as $fileinfo) {
-            $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-            $todo($fileinfo->getRealPath());
-        }
-
-        return rmdir($abspath);
+        return file_exists($abspath);
     }
 
     /**
