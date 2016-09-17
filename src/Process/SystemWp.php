@@ -30,7 +30,7 @@ class SystemWp extends ShellCommand
 
     protected function getCwd()
     {
-        return $this->props->fullPath();
+        return $this->props->projectRoot();
     }
 
     protected function getEnv()
