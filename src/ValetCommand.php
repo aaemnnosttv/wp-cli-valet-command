@@ -161,8 +161,7 @@ class ValetCommand
             Valet::secure($this->props->site_name);
         }
 
-
-        WP_CLI::success("{$this->props->site_name} ready! " . $this->props->fullUrl());
+        WP_CLI::success($this->props->site_name . ' ready! ' . $this->props->fullUrl());
     }
 
     /**

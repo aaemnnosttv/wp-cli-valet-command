@@ -59,7 +59,7 @@ class Props
 
     /**
      * Get the absolute path to the project's root directory.
-     * 
+     *
      * @return string
      */
     public function projectRoot()
@@ -96,7 +96,7 @@ class Props
     }
 
     /**
-     * Get the full URL to the new website.
+     * Get the full URL to the install.
      *
      * @return string
      */
