@@ -31,8 +31,6 @@ class BedrockInstaller extends WordPressInstaller
     {
         Command::debug('Configuring .env');
 
-        $env_file_path = $this->props->fullPath('.env.example');
-
         $env_contents = str_replace(
             [
                 'database_name',
@@ -48,9 +46,9 @@ class BedrockInstaller extends WordPressInstaller
                 $this->props->option('dbhost', 'localhost'),
                 $this->props->fullUrl(),
             ],
-            file_get_contents($env_file_path)
+            file_get_contents($this->props->fullPath('.env.example'))
         );
 
-        file_put_contents($env_file_path, $env_contents);
+        file_put_contents($this->props->fullPath('.env'), $env_contents);
     }
 }
