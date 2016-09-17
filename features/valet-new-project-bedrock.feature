@@ -29,3 +29,6 @@ Feature: It can create new installs for Valet-supported WordPress projects.
     Then STDOUT should be a table containing rows:
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
+
+    When I run `wp valet destroy {PROJECT} --yes`
+    Then the {PROJECT} directory should not exist
