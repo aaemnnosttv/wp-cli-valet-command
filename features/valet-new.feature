@@ -26,6 +26,7 @@ Feature: Create a new install.
     When I run `wp valet new {PROJECT} --db=sqlite`
     Then the {PROJECT}/wp-config.php file should exist
     And the {PROJECT}/wp-content/db.php file should exist
+    And the wp_{PROJECT} database should not exist
     And STDOUT should contain:
       """
       Success: {PROJECT} ready! https://{PROJECT}.dev
