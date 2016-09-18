@@ -220,6 +220,8 @@ class ValetCommand
         static::debug('Removing all files...');
         if ($this->rm_rf($project_abspath)) {
             WP_CLI::success("{$this->props->site_name} was destroyed.");
+        } else {
+            WP_CLI::warning('Some files were unable to be deleted.');
         }
     }
 
