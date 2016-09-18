@@ -1,6 +1,6 @@
 # WP-CLI Valet Command
 
-Harness the power of Laravel Valet for creating fully functional WordPress installs in seconds.
+White-glove services for turn-key installs in seconds.
 
 [![Build Status](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command.svg?branch=master)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command)
 
@@ -15,15 +15,20 @@ This package implements the following commands:
 Create a new WordPress install -- fast
 
 ~~~
-wp valet new <domain> [--project=<project>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure]
+wp valet new <name> [--project=<project>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure]
 ~~~
 
+This command will spin up a new WordPress installation -- complete with database and https
+_ready-to-use in your browser_ faster than you can put your pants on.
+
 **OPTIONS**
-	<domain>
-		Site domain name without TLD.  Eg:  example.com = example
+
+	<name>
+		Site domain name without TLD.
+		Eg: To create an install for example.dev, `wp valet new example`
 
 	[--project=<project>]
-		Composer project to use instead of vanilla WordPress.
+		The WordPress project to install. Choose from any project supported by Laravel Valet.
 		---
 		default: wp
 		options:
@@ -32,16 +37,16 @@ wp valet new <domain> [--project=<project>] [--version=<version>] [--locale=<loc
 		---
 
 	[--version=<version>]
-		WordPress version to install
+		WordPress version to install.
 		---
 		default: latest
 		---
 
 	[--locale=<locale>]
-		Select which language you want to install
+		Select which language you want to install.
 
 	[--db=<db>]
-		Database driver
+		Database driver to provision the site with.
 		---
 		default: mysql
 		options:
@@ -50,10 +55,11 @@ wp valet new <domain> [--project=<project>] [--version=<version>] [--locale=<loc
 		---
 
 	[--dbname=<dbname>]
-		Database name (MySQL only). Default: 'wp_{domain}'
+		Database name (MySQL only).
+		Defaults to 'wp_<name>'.
 
 	[--dbuser=<dbuser>]
-		Database User (MySQL only)
+		Database User (MySQL only).
 		---
 		default: root
 		---
@@ -65,7 +71,7 @@ wp valet new <domain> [--project=<project>] [--version=<version>] [--locale=<loc
 		---
 
 	[--dbprefix=<dbprefix>]
-		Set the database table prefix. Default: 'wp_'
+		Set the database table prefix.
 		---
 		default: 'wp_'
 		---
@@ -92,21 +98,36 @@ wp valet new <domain> [--project=<project>] [--version=<version>] [--locale=<loc
 
 ### wp valet destroy
 
-Blow away an installation.
+Completely remove an installation.
 
 ~~~
 wp valet destroy <name> [--yes]
 ~~~
 
+This will drop the database, and delete all of the files as well as
+remove any self-signed TLS certificate that was generated for serving
+this install over https.
+
 **OPTIONS**
 
 	<name>
-		Site domain name without TLD.  Eg:  example.com = example
+		Site domain name without TLD.
+		Eg: To create an install for example.dev, `wp valet new example`
 
 	[--yes]
-		Pre-approve the confirmation to delete all files and drop database.
+		Pre-approve the confirmation to delete all files and drop the database.
 
 ## Installing
+
+### Prerequisites
+
+This command leverages [Laravel Valet](https://laravel.com/docs/5.2/valet#installation) -- the development environment for Mac minimalists.
+Because of this **support is unfortunately limited to Mac only**.
+
+Follow the [installation instructions](https://laravel.com/docs/5.2/valet#installation) on the Laravel documentation to get started.
+This is what makes it possible to load a site in your browser immediately after creating it, without any other configuration.
+
+You will also need some understanding of how Valet works, especially the portion on [Serving Sites](https://laravel.com/docs/5.2/valet#serving-sites).
 
 Installing this package requires WP-CLI v0.23.0 or greater. Update to the latest stable release with `wp cli update`.
 

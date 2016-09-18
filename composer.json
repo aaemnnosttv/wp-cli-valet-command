@@ -1,6 +1,6 @@
 {
     "name": "aaemnnosttv/wp-cli-valet-command",
-    "description": "Harness the power of Laravel Valet for creating fully functional WordPress installs in seconds.",
+    "description": "White-glove services for turn-key installs in seconds.",
     "keywords": ["wordpress", "laravel", "valet", "zonda"],
     "license": "MIT",
     "authors": [
@@ -39,6 +39,11 @@
         "commands": [
             "valet new",
             "valet destroy"
-        ]
+        ],
+        "readme": {
+            "installing": {
+                "pre": "PREREQUISITES.md"
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ use WP_CLI_Valet\Process\SystemValet;
 use WP_CLI_Valet\Process\SystemWp;
 
 /**
- * Zonda is golden.
+ * White-glove turn-key install services.
  */
 class ValetCommand
 {
@@ -56,12 +56,17 @@ class ValetCommand
     /**
      * Create a new WordPress install -- fast
      *
+     * This command will spin up a new WordPress installation -- complete with database and https
+     * _ready-to-use in your browser_ faster than you can put your pants on.
+     *
      * ## OPTIONS
-     * <domain>
-     * : Site domain name without TLD.  Eg:  example.com = example
+     *
+     * <name>
+     * : Site domain name without TLD.
+     * Eg: To create an install for example.dev, `wp valet new example`
      *
      * [--project=<project>]
-     * : Composer project to use instead of vanilla WordPress.
+     * : The WordPress project to install. Choose from any project supported by Laravel Valet.
      * ---
      * default: wp
      * options:
@@ -70,16 +75,16 @@ class ValetCommand
      * ---
      *
      * [--version=<version>]
-     * : WordPress version to install
+     * : WordPress version to install.
      * ---
      * default: latest
      * ---
      *
      * [--locale=<locale>]
-     * : Select which language you want to install
+     * : Select which language you want to install.
      *
      * [--db=<db>]
-     * : Database driver
+     * : Database driver to provision the site with.
      * ---
      * default: mysql
      * options:
@@ -88,10 +93,11 @@ class ValetCommand
      * ---
      *
      * [--dbname=<dbname>]
-     * : Database name (MySQL only). Default: 'wp_{domain}'
+     * : Database name (MySQL only).
+     * Defaults to 'wp_<name>'.
      *
      * [--dbuser=<dbuser>]
-     * : Database User (MySQL only)
+     * : Database User (MySQL only).
      * ---
      * default: root
      * ---
@@ -103,7 +109,7 @@ class ValetCommand
      * ---
      *
      * [--dbprefix=<dbprefix>]
-     * : Set the database table prefix. Default: 'wp_'
+     * : Set the database table prefix.
      * ---
      * default: 'wp_'
      * ---
@@ -128,7 +134,7 @@ class ValetCommand
      *
      * @subcommand new
      *
-     * @when       before_wp_load
+     * @when before_wp_load
      *
      * @param $args
      * @param $assoc_args
@@ -164,17 +170,22 @@ class ValetCommand
     }
 
     /**
-     * Blow away an installation.
+     * Completely remove an installation.
+     *
+     * This will drop the database, and delete all of the files as well as
+     * remove any self-signed TLS certificate that was generated for serving
+     * this install over https.
      *
      * ## OPTIONS
      *
      * <name>
-     * : Site domain name without TLD.  Eg:  example.com = example
+     * : Site domain name without TLD.
+     * Eg: To create an install for example.dev, `wp valet new example`
      *
      * [--yes]
-     * : Pre-approve the confirmation to delete all files and drop database.
+     * : Pre-approve the confirmation to delete all files and drop the database.
      *
-     * @when       before_wp_load
+     * @when before_wp_load
      *
      * @param $args
      * @param $assoc_args
