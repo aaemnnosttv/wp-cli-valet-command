@@ -38,6 +38,15 @@ class Props
     }
 
     /**
+     * @return bool
+     */
+    public function usingSqlite()
+    {
+        return 'sqlite' == $this->option('db')
+            || $this->option('portable');
+    }
+
+    /**
      * Get the database name as specified by the user, or fallback to a sensible default.
      *
      * @return string
@@ -115,7 +124,7 @@ class Props
      */
     public function isSecure()
     {
-        return ! $this->option('unsecure');
+        return ! ($this->option('unsecure') || $this->option('portable'));
     }
 
     /**

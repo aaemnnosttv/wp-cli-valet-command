@@ -15,7 +15,7 @@ This package implements the following commands:
 Create a new WordPress install -- fast
 
 ~~~
-wp valet new <name> [--project=<project>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure]
+wp valet new <name> [--project=<project>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure] [--portable]
 ~~~
 
 This command will spin up a new WordPress installation -- complete with database and https
@@ -92,7 +92,10 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 		The email to use for the WordPress admin user.
 
 	[--unsecure]
-		Provisions the site for http rather than https.
+		Provision the site for http rather than https.
+
+	[--portable]
+		Provision the site to be portable. Implies --unsecure and --db=sqlite.
 
 
 

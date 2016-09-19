@@ -74,7 +74,7 @@ class WordPressInstaller implements InstallerInterface
      */
     public function createDatabase()
     {
-        if ('sqlite' == $this->props->option('db')) {
+        if ($this->props->usingSqlite()) {
             $this->createSqlite();
         } else {
             $this->createMySql();

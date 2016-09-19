@@ -130,7 +130,10 @@ class ValetCommand
      * : The email to use for the WordPress admin user.
      *
      * [--unsecure]
-     * : Provisions the site for http rather than https.
+     * : Provision the site for http rather than https.
+     *
+     * [--portable]
+     * : Provision the site to be portable. Implies --unsecure and --db=sqlite.
      *
      * @subcommand new
      *

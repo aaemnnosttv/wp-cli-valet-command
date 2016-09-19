@@ -31,3 +31,15 @@ Feature: Create a new install.
       """
       Success: {PROJECT} ready! https://{PROJECT}.dev
       """
+
+  Scenario: It can create a new portable WordPress install.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    When I run `wp valet new {PROJECT} --portable`
+    Then the {PROJECT}/wp-config.php file should exist
+    And the {PROJECT}/wp-content/db.php file should exist
+    And the wp_{PROJECT} database should not exist
+    And STDOUT should contain:
+      """
+      Success: {PROJECT} ready! http://{PROJECT}.dev
+      """
