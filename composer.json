@@ -33,6 +33,7 @@
         "johnpbloch/wordpress": "^4.6"
     },
     "scripts": {
+        "update-readme": "wp scaffold package-readme . --force",
         "run-behat": "WP_CLI_BIN_DIR=$PWD/vendor/bin vendor/bin/behat --ansi --format=progress"
     },
     "extra": {
