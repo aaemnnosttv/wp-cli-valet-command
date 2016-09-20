@@ -1,27 +1,50 @@
 {
     "name": "aaemnnosttv/wp-cli-valet-command",
-    "description": "Harness the power of Laravel Valet for creating fully functional WordPress installs in seconds.",
+    "description": "White-glove services for turn-key installs in seconds.",
     "keywords": ["wordpress", "laravel", "valet", "zonda"],
     "license": "MIT",
     "authors": [
-      {
-        "name": "Evan Mattson",
-        "email": "me@aaemnnost.tv",
-        "homepage": "https://aaemnnost.tv"
-      }
+        {
+            "name": "Evan Mattson",
+            "email": "me@aaemnnost.tv",
+            "homepage": "https://aaemnnost.tv"
+        }
     ],
-    "homepage": "https://github.com/aaemnnosttv/wp-cli-valet-command",
+    "homepage": "https://aaemnnost.tv/wp-cli-commands/valet/",
     "support": {
-      "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
+        "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
     },
     "autoload": {
-      "psr-4": {"WP_CLI_Valet\\": "src"},
-      "files": ["command.php"]
+        "psr-4": {
+            "WP_CLI_Valet\\": "src"
+        },
+        "files": [
+            "command.php"
+        ]
     },
     "require": {
-      "php": "^5.5|^7.0"
+        "php": "^5.5|^7.0",
+        "illuminate/container": "^5.1",
+        "symfony/filesystem": "^2.7 | ^3.0"
     },
     "require-dev": {
-        "wp-cli/wp-cli": "^0.24.1"
+        "wp-cli/wp-cli": "^0.24.1",
+        "behat/behat": "~2.5",
+        "johnpbloch/wordpress": "^4.6"
+    },
+    "scripts": {
+        "update-readme": "wp scaffold package-readme . --force",
+        "run-behat": "WP_CLI_BIN_DIR=$PWD/vendor/bin vendor/bin/behat --ansi --format=progress"
+    },
+    "extra": {
+        "commands": [
+            "valet new",
+            "valet destroy"
+        ],
+        "readme": {
+            "installing": {
+                "pre": "PREREQUISITES.md"
+            }
+        }
     }
 }
