@@ -24,7 +24,7 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 **OPTIONS**
 
 	<name>
-		Site domain name without TLD.
+		Site domain name without TLD. This will become the directory name of the project root.
 		Eg: To create an install for example.dev, `wp valet new example`
 
 	[--project=<project>]
@@ -114,8 +114,7 @@ this install over https.
 **OPTIONS**
 
 	<name>
-		Site domain name without TLD.
-		Eg: To create an install for example.dev, `wp valet new example`
+		Site domain name without TLD. It should match the directory name of the project root.
 
 	[--yes]
 		Pre-approve the confirmation to delete all files and drop the database.
