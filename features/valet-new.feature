@@ -20,6 +20,31 @@ Feature: Create a new install.
       Success: {PROJECT} ready! http://{PROJECT}.dev
       """
 
+  Scenario: It accepts options for configuring the new install.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    And a random string as {ADMIN}
+
+    When I run `wp valet new {PROJECT} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=4.5 --dbname=wp_cli_test --dbprefix={ADMIN}_ --dbuser=wp_cli_test --dbpass=password1`
+    Then the wp_cli_test database should exist
+
+    When I run `wp db tables --path={PROJECT}`
+    Then STDOUT should contain:
+      """
+      {ADMIN}_users
+      """
+
+    When I run `wp core version --path={PROJECT}`
+    Then STDOUT should be:
+      """
+      4.5
+      """
+
+    When I run `wp user list --fields=ID,user_login,user_email --path={PROJECT}`
+    Then STDOUT should be a table containing rows:
+      | ID | user_login   | user_email          |
+      | 1  | {ADMIN}      | hello@{PROJECT}.dev |
+
   Scenario: It can create a new WordPress install using sqlite for the database.
     Given an empty directory
     And a random project name as {PROJECT}
