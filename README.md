@@ -2,7 +2,8 @@
 
 White-glove services for turn-key installs in seconds.
 
-[![Build Status](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command.svg?branch=master)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command)
+[![Travis Build](https://img.shields.io/travis/aaemnnosttv/wp-cli-valet-command/master.svg)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command)
+[![Packagist](https://img.shields.io/packagist/v/aaemnnosttv/wp-cli-valet-command.svg)](https://packagist.org/packages/aaemnnosttv/wp-cli-valet-command)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing)
 
