@@ -7,6 +7,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use WP_CLI;
 use WP_CLI_Valet\Installer\BedrockInstaller;
 use WP_CLI_Valet\Installer\InstallerInterface;
+use WP_CLI_Valet\Installer\ThemosisInstaller;
 use WP_CLI_Valet\Installer\WordPressInstaller;
 use WP_CLI_Valet\Process\FakeValet;
 use WP_CLI_Valet\Process\SystemComposer;
@@ -51,6 +52,7 @@ class ValetCommand
 
         $container->bind('wp-installer', WordPressInstaller::class);
         $container->bind('bedrock-installer', BedrockInstaller::class);
+        $container->bind('themosis-installer', ThemosisInstaller::class);
     }
 
     /**
@@ -72,6 +74,7 @@ class ValetCommand
      * options:
      *   - wp
      *   - bedrock
+     *   - themosis
      * ---
      *
      * [--version=<version>]
