@@ -35,6 +35,7 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 		options:
 		  - wp
 		  - bedrock
+		  - wordplate
 		---
 
 	[--version=<version>]
