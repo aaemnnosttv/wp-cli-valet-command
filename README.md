@@ -16,7 +16,7 @@ This package implements the following commands:
 Create a new WordPress install -- fast
 
 ~~~
-wp valet new <name> [--project=<project>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure] [--portable]
+wp valet new <name> [--project=<project>] [--in=<dir>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure] [--portable]
 ~~~
 
 This command will spin up a new WordPress installation -- complete with database and https
@@ -36,6 +36,10 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 		  - wp
 		  - bedrock
 		---
+
+	[--in=<dir>]
+		Specify the path to the parent directory to create the install in.
+		Defaults to the current working directory.
 
 	[--version=<version>]
 		WordPress version to install.
