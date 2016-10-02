@@ -47,7 +47,7 @@ class WordPressInstaller implements InstallerInterface
             'locale'  => $this->props->option('locale'),
         ]);
 
-        if (! is_dir($full_path = $this->props->fullPath())) {
+        if (! is_dir($full_path = $this->props->projectRoot())) {
             mkdir($full_path, 0755, true);
         }
 
