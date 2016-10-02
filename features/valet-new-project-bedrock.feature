@@ -32,3 +32,12 @@ Feature: It can create new installs for Valet-supported WordPress projects.
 
     When I run `wp valet destroy {PROJECT} --yes`
     Then the {PROJECT} directory should not exist
+
+  @issue-10
+  Scenario: It can create a new Bedrock install using the given path to the parent dir.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    And a random string as {PATH}
+
+    When I run `wp valet new {PROJECT} --project=bedrock --in={PATH} --debug`
+    Then the {PATH}/{PROJECT}/.env file should exist

@@ -20,27 +20,30 @@ Feature: Create a new install.
       Success: {PROJECT} ready! http://{PROJECT}.dev
       """
 
+  @issue-10
   Scenario: It accepts options for configuring the new install.
     Given an empty directory
     And a random project name as {PROJECT}
     And a random string as {ADMIN}
+    And a random string as {PATH}
 
-    When I run `wp valet new {PROJECT} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=4.5 --dbname=wp_cli_test --dbprefix={ADMIN}_ --dbuser=wp_cli_test --dbpass=password1`
+    When I run `wp valet new {PROJECT} --in={PATH} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=4.5 --dbname=wp_cli_test --dbprefix={ADMIN}_ --dbuser=wp_cli_test --dbpass=password1`
+    Then the {PATH}/{PROJECT}/wp-config.php file should exist
     Then the wp_cli_test database should exist
 
-    When I run `wp db tables --path={PROJECT}`
+    When I run `wp db tables --path={PATH}/{PROJECT}`
     Then STDOUT should contain:
       """
       {ADMIN}_users
       """
 
-    When I run `wp core version --path={PROJECT}`
+    When I run `wp core version --path={PATH}/{PROJECT}`
     Then STDOUT should be:
       """
       4.5
       """
 
-    When I run `wp user list --fields=ID,user_login,user_email --path={PROJECT}`
+    When I run `wp user list --fields=ID,user_login,user_email --path={PATH}/{PROJECT}`
     Then STDOUT should be a table containing rows:
       | ID | user_login   | user_email          |
       | 1  | {ADMIN}      | hello@{PROJECT}.dev |
