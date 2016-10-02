@@ -74,6 +74,10 @@ class ValetCommand
      *   - bedrock
      * ---
      *
+     * [--in=<dir>]
+     * : Specify the path to the parent directory to create the install in.
+     * Defaults to the current working directory.
+     *
      * [--version=<version>]
      * : WordPress version to install.
      * ---

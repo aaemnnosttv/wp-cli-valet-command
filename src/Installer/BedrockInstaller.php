@@ -18,6 +18,10 @@ class BedrockInstaller extends WordPressInstaller
     {
         Command::debug('Installing Bedrock via Composer');
 
+        if (! is_dir($full_path = $this->props->projectRoot())) {
+            mkdir($full_path, 0755, true);
+        }
+
         Composer::createProject('roots/bedrock', $this->props->site_name, [
             'working-dir'    => $this->props->parentDirectory(),
             'no-interaction' => true,
