@@ -96,7 +96,7 @@ class Props
     public function fullPath($relative = '')
     {
         $parts = array_filter([
-            $this->option('path', getcwd()),
+            $this->option('in', getcwd()),
             $this->site_name,
             $relative
         ]);
