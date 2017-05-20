@@ -29,7 +29,7 @@
         "symfony/filesystem": "^2.7 | ^3.0"
     },
     "require-dev": {
-        "wp-cli/wp-cli": "^0.24.1",
+        "wp-cli/wp-cli": "^1.0",
         "behat/behat": "~2.5",
         "johnpbloch/wordpress": "^4.6"
     },
