@@ -8,6 +8,12 @@ function assertEquals( $expected, $actual ) {
 	}
 }
 
+function assertNotEquals( $expected, $actual ) {
+	if ( $expected == $actual ) {
+		throw new Exception( "Actual value: " . var_export( $actual, true ) );
+	}
+}
+
 function assertNumeric( $actual ) {
 	if ( !is_numeric( $actual ) ) {
 		throw new Exception( "Actual value: " . var_export( $actual, true ) );
@@ -176,8 +182,8 @@ function checkThatCsvStringContainsValues( $actualCSV, $expectedCSV ) {
  * @param[in] $expectedYaml the expected YAML string
  */
 function checkThatYamlStringContainsYamlString( $actualYaml, $expectedYaml ) {
-	$actualValue   = spyc_load( $actualYaml );
-	$expectedValue = spyc_load( $expectedYaml );
+	$actualValue   = Mustangostang\Spyc::YAMLLoad( $actualYaml );
+	$expectedValue = Mustangostang\Spyc::YAMLLoad( $expectedYaml );
 
 	if ( !$actualValue ) {
 		return false;

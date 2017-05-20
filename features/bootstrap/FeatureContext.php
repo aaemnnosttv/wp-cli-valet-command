@@ -12,13 +12,14 @@ use \WP_CLI\Utils;
 if ( file_exists( __DIR__ . '/utils.php' ) ) {
 	require_once __DIR__ . '/utils.php';
 	require_once __DIR__ . '/Process.php';
+	require_once __DIR__ . '/ProcessRun.php';
 	$project_composer = dirname( dirname( dirname( __FILE__ ) ) ) . '/composer.json';
 	if ( file_exists( $project_composer ) ) {
 		$composer = json_decode( file_get_contents( $project_composer ) );
 		if ( ! empty( $composer->autoload->files ) ) {
 			$contents = 'require:' . PHP_EOL;
 			foreach( $composer->autoload->files as $file ) {
-				$contents .= '  - ' . dirname( dirname( dirname( __FILE__ ) ) ) . '/' . $file;
+				$contents .= '  - ' . dirname( dirname( dirname( __FILE__ ) ) ) . '/' . $file . PHP_EOL;
 			}
 			@mkdir( sys_get_temp_dir() . '/wp-cli-package-test/' );
 			$project_config = sys_get_temp_dir() . '/wp-cli-package-test/config.yml';
@@ -30,6 +31,7 @@ if ( file_exists( __DIR__ . '/utils.php' ) ) {
 } else {
 	require_once __DIR__ . '/../../php/utils.php';
 	require_once __DIR__ . '/../../php/WP_CLI/Process.php';
+	require_once __DIR__ . '/../../php/WP_CLI/ProcessRun.php';
 	require_once __DIR__ . '/../../vendor/autoload.php';
 }
 
@@ -57,9 +59,10 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	 */
 	private static function get_process_env_variables() {
 		// Ensure we're using the expected `wp` binary
-		$bin_dir = getenv( 'WP_CLI_BIN_DIR' ) ?: realpath( __DIR__ . "/../../bin" );
+		$bin_dir = getenv( 'WP_CLI_BIN_DIR' ) ?: realpath( __DIR__ . '/../../bin' );
+		$vendor_dir = realpath( __DIR__ . '/../../vendor/bin' );
 		$env = array(
-			'PATH' =>  $bin_dir . ':' . getenv( 'PATH' ),
+			'PATH' =>  $bin_dir . ':' . $vendor_dir . ':' . getenv( 'PATH' ),
 			'BEHAT_RUN' => 1,
 			'HOME' => '/tmp/wp-cli-home',
 		);
@@ -78,6 +81,9 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			return;
 
 		$cmd = Utils\esc_cmd( 'wp core download --force --path=%s', self::$cache_dir );
+		if ( getenv( 'WP_VERSION' ) ) {
+			$cmd .= Utils\esc_cmd( ' --version=%s', getenv( 'WP_VERSION' ) );
+		}
 		Process::create( $cmd, null, self::get_process_env_variables() )->run_check();
 	}
 
@@ -90,6 +96,9 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		echo $result->stdout;
 		echo PHP_EOL;
 		self::cache_wp_files();
+		$result = Process::create( Utils\esc_cmd( 'wp core version --path=%s', self::$cache_dir ) , null, self::get_process_env_variables() )->run_check();
+		echo 'WordPress ' . $result->stdout;
+		echo PHP_EOL;
 	}
 
 	/**
@@ -119,18 +128,21 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 			}
 		}
 
+		// Remove WP-CLI package directory
+		if ( isset( $this->variables['PACKAGE_PATH'] ) ) {
+			$this->proc( Utils\esc_cmd( 'rm -rf %s', $this->variables['PACKAGE_PATH'] ) )->run();
+		}
+
 		foreach ( $this->running_procs as $proc ) {
-			self::terminate_proc( $proc );
+			$status = proc_get_status( $proc );
+			self::terminate_proc( $status['pid'] );
 		}
 	}
 
 	/**
 	 * Terminate a process and any of its children.
 	 */
-	private static function terminate_proc( $proc ) {
-		$status = proc_get_status( $proc );
-
-		$master_pid = $status['pid'];
+	private static function terminate_proc( $master_pid ) {
 
 		$output = `ps -o ppid,pid,command | grep $master_pid`;
 
@@ -140,9 +152,7 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 				$child = $matches[2];
 
 				if ( $parent == $master_pid ) {
-					if ( ! posix_kill( (int) $child, 9 ) ) {
-						throw new RuntimeException( posix_strerror( posix_get_last_error() ) );
-					}
+					self::terminate_proc( $child );
 				}
 			}
 		}
@@ -165,6 +175,9 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	 * @param array $parameters context parameters (set them up through behat.yml)
 	 */
 	public function __construct( array $parameters ) {
+		if ( getenv( 'WP_CLI_TEST_DBHOST' ) ) {
+			self::$db_settings['dbhost'] = getenv( 'WP_CLI_TEST_DBHOST' );
+		}
 		$this->drop_db();
 		$this->set_cache_dir();
 		$this->variables['CORE_CONFIG_SETTINGS'] = Utils\assoc_args_to_str( self::$db_settings );
@@ -202,11 +215,49 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	public function build_phar( $version = 'same' ) {
 		$this->variables['PHAR_PATH'] = $this->variables['RUN_DIR'] . '/' . uniqid( "wp-cli-build-", TRUE ) . '.phar';
 
+		// Test running against WP-CLI proper
+		$make_phar_path = __DIR__ . '/../../utils/make-phar.php';
+		if ( ! file_exists( $make_phar_path ) ) {
+			// Test running against a package installed as a WP-CLI dependency
+			// WP-CLI installed as a project dependency
+			$make_phar_path = __DIR__ . '/../../../../../utils/make-phar.php';
+			if ( ! file_exists( $make_phar_path ) ) {
+				// WP-CLI as a dependency of this project
+				$make_phar_path = __DIR__ . '/../../vendor/wp-cli/wp-cli/utils/make-phar.php';
+			}
+		}
+
 		$this->proc( Utils\esc_cmd(
 			'php -dphar.readonly=0 %1$s %2$s --version=%3$s && chmod +x %2$s',
-			__DIR__ . '/../../utils/make-phar.php',
+			$make_phar_path,
 			$this->variables['PHAR_PATH'],
 			$version
+		) )->run_check();
+	}
+
+	public function download_phar( $version = 'same' ) {
+		if ( 'same' === $version ) {
+			$version = WP_CLI_VERSION;
+		}
+
+		$download_url = sprintf(
+			'https://github.com/wp-cli/wp-cli/releases/download/v%1$s/wp-cli-%1$s.phar',
+			$version
+		);
+
+		$this->variables['PHAR_PATH'] = $this->variables['RUN_DIR'] . '/'
+		                                . uniqid( 'wp-cli-download-', true )
+		                                . '.phar';
+
+		Process::create( \WP_CLI\Utils\esc_cmd(
+			'curl -sSL %s > %s',
+			$download_url,
+			$this->variables['PHAR_PATH']
+		) )->run_check();
+
+		Process::create( \WP_CLI\Utils\esc_cmd(
+			'chmod +x %s',
+			$this->variables['PHAR_PATH']
 		) )->run_check();
 	}
 
@@ -217,7 +268,7 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	}
 
 	private static function run_sql( $sql ) {
-		Utils\run_mysql_command( 'mysql --no-defaults', array(
+		Utils\run_mysql_command( '/usr/bin/env mysql --no-defaults', array(
 			'execute' => $sql,
 			'host' => self::$db_settings['dbhost'],
 			'user' => self::$db_settings['dbuser'],
@@ -302,18 +353,18 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 
 	public function create_config( $subdir = '' ) {
 		$params = self::$db_settings;
-		$params['dbprefix'] = $subdir ?: 'wp_';
+		// Replaces all characters that are not alphanumeric or an underscore into an underscore.
+		$params['dbprefix'] = $subdir ? preg_replace( '#[^a-zA-Z\_0-9]#', '_', $subdir ) : 'wp_';
 
 		$params['skip-salts'] = true;
 		$this->proc( 'wp core config', $params, $subdir )->run_check();
 	}
 
 	public function install_wp( $subdir = '' ) {
-        $subdir = $this->replace_variables($subdir);
-
 		$this->create_db();
 		$this->create_run_dir();
 		$this->download_wp( $subdir );
+
 		$this->create_config( $subdir );
 
 		$install_args = array(

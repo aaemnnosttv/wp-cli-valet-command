@@ -146,6 +146,15 @@ $steps->Then( '/^(STDOUT|STDERR) should not be empty$/',
 	}
 );
 
+$steps->Then( '/^(STDOUT|STDERR) should be a version string (<|<=|>|>=|==|=|!=|<>) ([+\w\.-]+)$/',
+	function ( $world, $stream, $operator, $goal_ver ) {
+		$stream = strtolower( $stream );
+		if ( false === version_compare( trim( $world->result->$stream, "\n" ), $goal_ver, $operator ) ) {
+			throw new Exception( $world->result );
+		}
+	}
+);
+
 $steps->Then( '/^the (.+) (file|directory) should (exist|not exist|be:|contain:|not contain:)$/',
 	function ( $world, $path, $type, $action, $expected = null ) {
 		$path = $world->replace_variables( $path );
@@ -206,4 +215,14 @@ $steps->Then('/^the ([^\s]+) database should( not)? exist$/', function($world, $
     } elseif (! $exists && $should_exist) {
         throw new Exception("Failed to assert that a database exists with the name '$database_name'");
     }
+});
+
+$steps->Then( '/^an email should (be sent|not be sent)$/', function( $world, $expected ) {
+	if ( 'be sent' === $expected ) {
+		assertNotEquals( 0, $world->email_sends );
+	} else if ( 'not be sent' === $expected ) {
+		assertEquals( 0, $world->email_sends );
+	} else {
+		throw new Exception( 'Invalid expectation' );
+	}
 });
