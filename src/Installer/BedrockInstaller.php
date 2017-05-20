@@ -25,6 +25,7 @@ class BedrockInstaller extends WordPressInstaller
         Composer::createProject('roots/bedrock', $this->props->site_name, [
             'working-dir'    => $this->props->parentDirectory(),
             'no-interaction' => true,
+            'no-scripts'     => true,
         ]);
     }
 
