@@ -220,7 +220,7 @@ class ValetCommand
         static::debug("Preparing to destroy {$this->props->site_name}.");
 
         WP_CLI::confirm(
-            WP_CLI::colorize("%rThis will delete all files and drop the database for the install {$this->props->site_name}.%n %yAre you sure?%n"),
+            WP_CLI::colorize("%rThis will delete all files and drop the database for the install at {$project_abspath}.%n %yAre you sure?%n"),
             $assoc_args
         );
 
