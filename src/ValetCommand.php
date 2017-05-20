@@ -177,7 +177,7 @@ class ValetCommand
     }
 
     /**
-     * Completely remove an installation.
+     * Completely remove one or more installations.
      *
      * This will drop the database, and delete all of the files as well as
      * remove any self-signed TLS certificate that was generated for serving
@@ -185,7 +185,7 @@ class ValetCommand
      *
      * ## OPTIONS
      *
-     * <name>
+     * <name>...
      * : Site domain name without TLD. It should match the directory name of the project root.
      *
      * [--yes]
@@ -198,19 +198,34 @@ class ValetCommand
      */
     public function destroy($args, $assoc_args)
     {
-        $this->setup_props($args, $assoc_args);
+        foreach ($args as $site) {
+            $this->setup_props((array) $site, $assoc_args);
+            $this->destroy_site($assoc_args);
+        }
+    }
+
+    /**
+     * Destroy an individual site.
+     * @param $assoc_args
+     */
+    protected function destroy_site($assoc_args)
+    {
         $project_abspath = $this->props->projectRoot();
 
         if (! is_dir($project_abspath)) {
-            WP_CLI::error("No install exists at $project_abspath");
+            WP_CLI::warning("No install exists at $project_abspath");
+            return;
         }
 
         static::debug("Preparing to destroy {$this->props->site_name}.");
 
-        WP_CLI::confirm('This will delete all files and drop the database for the install. Are you sure?', $assoc_args);
+        WP_CLI::confirm(
+            WP_CLI::colorize("%rThis will delete all files and drop the database for the install {$this->props->site_name}.%n %yAre you sure?%n"),
+            $assoc_args
+        );
 
         try {
-            static::debug('Dropping database...');
+            static::debug("Dropping database for {$this->props->site_name}");
             WP::db('drop', ['yes' => true]);
         } catch (\Exception $e) {
             WP_CLI::warning('The database was unable to be dropped. Disregard this warning if using sqlite for this site.');
@@ -223,7 +238,7 @@ class ValetCommand
             $this->exceptionHandler($e);
         }
 
-        static::debug('Removing all files...');
+        static::debug("Removing all files for {$this->props->site_name}");
         if ($this->rm_rf($project_abspath)) {
             WP_CLI::success("{$this->props->site_name} was destroyed.");
         } else {
