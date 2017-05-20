@@ -35,7 +35,7 @@
     },
     "scripts": {
         "update-readme": "wp scaffold package-readme . --force",
-        "run-behat": "WP_CLI_BIN_DIR=$PWD/vendor/bin vendor/bin/behat --ansi --format=progress"
+        "run-behat": "WP_CLI_BIN_DIR=$PWD/vendor/bin vendor/bin/behat --ansi"
     },
     "extra": {
         "commands": [
