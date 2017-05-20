@@ -361,6 +361,8 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 	}
 
 	public function install_wp( $subdir = '' ) {
+        $subdir = $this->replace_variables( $subdir );
+
 		$this->create_db();
 		$this->create_run_dir();
 		$this->download_wp( $subdir );
