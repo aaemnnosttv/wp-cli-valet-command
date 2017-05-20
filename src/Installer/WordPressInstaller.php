@@ -125,7 +125,8 @@ class WordPressInstaller implements InstallerInterface
             'admin_user'     => $this->props->option('admin_user'),
             'admin_password' => $this->props->option('admin_password'),
             'admin_email'    => $this->props->option('admin_email', "admin@{$this->props->domain}"),
-            'skip-email'     => true
+            'skip-email'     => true,
+            'skip-packages'  => true,
         ]);
     }
 
