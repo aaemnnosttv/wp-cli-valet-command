@@ -226,8 +226,13 @@ class ValetCommand
 
         try {
             static::debug("Dropping database for {$this->props->site_name}");
-            WP::db('drop', ['yes' => true]);
+            WP::db('drop', [
+                'yes' => true,
+                'path' => $this->props->fullPath(),
+            ]);
         } catch (\Exception $e) {
+            $message = get_class($e) . ' ' . $e->getMessage();
+            static::debug("Error dropping database: $message");
             WP_CLI::warning('The database was unable to be dropped. Disregard this warning if using sqlite for this site.');
         }
 
