@@ -14,7 +14,7 @@ Feature: It can completely erase an installation.
     When I try `wp valet destroy {INSTALL} < session`
     Then STDOUT should contain:
       """
-      This will delete all files and drop the database for the install. Are you sure?
+      This will delete all files and drop the database for the install at
       """
     Then the {INSTALL} directory should exist
 
