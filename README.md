@@ -16,7 +16,7 @@ This package implements the following commands:
 Create a new WordPress install -- fast
 
 ~~~
-wp valet new <name> [--project=<project>] [--in=<dir>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure] [--portable]
+wp valet new <name> [--project=<project>] [--in=<dir>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--multisite=<type>] [--unsecure] [--portable]
 ~~~
 
 This command will spin up a new WordPress installation -- complete with database and https
@@ -96,6 +96,15 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 	[--admin_email=<email>]
 		The email to use for the WordPress admin user.
 
+	[--multisite=<type>]
+		Install as a multisite network.
+		---
+		default: directory
+		options:
+		  - directory
+		  - subdomain
+		---
+
 	[--unsecure]
 		Provision the site for http rather than https.
 
@@ -106,10 +115,10 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 
 ### wp valet destroy
 
-Completely remove an installation.
+Completely remove one or more installations.
 
 ~~~
-wp valet destroy <name> [--yes]
+wp valet destroy <name>... [--yes]
 ~~~
 
 This will drop the database, and delete all of the files as well as
@@ -118,7 +127,7 @@ this install over https.
 
 **OPTIONS**
 
-	<name>
+	<name>...
 		Site domain name without TLD. It should match the directory name of the project root.
 
 	[--yes]
