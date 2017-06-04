@@ -295,6 +295,12 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		self::run_sql( "DROP DATABASE IF EXISTS $dbname" );
 	}
 
+	public function db_exists( $dbname ) {
+        $connection = mysqli_connect( self::$db_settings['dbhost'], self::$db_settings['dbuser'], self::$db_settings['dbpass'] );
+
+        return mysqli_select_db( $connection, $dbname );
+    }
+
 	public function proc( $command, $assoc_args = array(), $path = '' ) {
 		if ( !empty( $assoc_args ) )
 			$command .= Utils\assoc_args_to_str( $assoc_args );
