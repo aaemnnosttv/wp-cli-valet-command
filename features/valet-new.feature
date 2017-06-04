@@ -103,3 +103,14 @@ Feature: Create a new install.
       """
       //foo.{PROJECT}.dev/
       """
+
+  @issue-23
+  Scenario: It creates new sites with a safe database name.
+    Given an empty directory
+    And the wp_app_example database should not exist
+    When I run `wp valet new app.example`
+    Then STDOUT should contain:
+      """
+      Success: app.example ready! https://app.example.dev
+      """
+    And the wp_app_example database should exist

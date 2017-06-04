@@ -53,7 +53,9 @@ class Props
      */
     public function databaseName()
     {
-        return $this->option('dbname', "wp_{$this->site_name}");
+        return preg_replace( '/[^a-zA-Z\_0-9]/', '_',
+            $this->option('dbname', "wp_{$this->site_name}")
+        );
     }
 
     /**
