@@ -5,12 +5,9 @@ php:
   - 5.6
   - 7.0
 
-install: composer install
+before_install: composer validate --strict
 
-before_script:
-  - composer validate --strict
-  - mysql -e 'CREATE DATABASE wp_cli_test;' -uroot
-  - mysql -e 'GRANT ALL PRIVILEGES ON wp_cli_test.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "password1"' -uroot
+install: composer install
 
 script: composer run-behat
 
