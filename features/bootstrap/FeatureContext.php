@@ -285,8 +285,8 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		) );
 	}
 
-	public function create_db() {
-		$dbname = self::$db_settings['dbname'];
+	public function create_db( $name = null ) {
+		$dbname = $name ?: self::$db_settings['dbname'];
 		self::run_sql( "CREATE DATABASE IF NOT EXISTS $dbname" );
 	}
 
@@ -360,12 +360,16 @@ class FeatureContext extends BehatContext implements ClosuredContextInterface {
 		copy( __DIR__ . '/../extra/no-mail.php', $dest_dir . '/wp-content/mu-plugins/no-mail.php' );
 	}
 
-	public function create_config( $subdir = '' ) {
+	public function create_config( $subdir = '', $db_name = null ) {
 		$params = self::$db_settings;
 		// Replaces all characters that are not alphanumeric or an underscore into an underscore.
 		$params['dbprefix'] = $subdir ? preg_replace( '#[^a-zA-Z\_0-9]#', '_', $subdir ) : 'wp_';
 
+		if ( $db_name ) {
+		    $params['dbname'] = preg_replace( '#[^a-zA-Z\_0-9]#', '_', $db_name );
+        }
 		$params['skip-salts'] = true;
+
 		$this->proc( 'wp core config', $params, $subdir )->run_check();
 	}
 
