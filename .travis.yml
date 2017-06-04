@@ -5,6 +5,8 @@ php:
   - 5.6
   - 7.0
 
+env: WP_CLI_TEST_DBUSER=travis WP_CLI_TEST_DBPASS=
+
 before_install: composer validate --strict
 
 install: composer install
