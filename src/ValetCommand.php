@@ -133,6 +133,15 @@ class ValetCommand
      * [--admin_email=<email>]
      * : The email to use for the WordPress admin user.
      *
+     * [--multisite=<type>]
+     * : Install as a multisite network.
+     * ---
+     * default: directory
+     * options:
+     *   - directory
+     *   - subdomain
+     * ---
+     *
      * [--unsecure]
      * : Provision the site for http rather than https.
      *

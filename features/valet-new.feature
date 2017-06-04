@@ -71,3 +71,35 @@ Feature: Create a new install.
       """
       Success: {PROJECT} ready! http://{PROJECT}.dev
       """
+
+  @multisite
+  Scenario: It can create a new site with a subdirectory multisite network.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    When I run `wp valet new {PROJECT} --multisite=directory`
+    Then STDOUT should contain:
+      """
+      Success: {PROJECT} ready! https://{PROJECT}.dev
+      """
+
+    When I run `wp site create --slug=foo --path={PROJECT}`
+    Then STDOUT should contain:
+      """
+      //{PROJECT}.dev/foo/
+      """
+
+  @multisite
+  Scenario: It can create a new site with a subdomain multisite network.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    When I run `wp valet new {PROJECT} --multisite=subdomain`
+    Then STDOUT should contain:
+      """
+      Success: {PROJECT} ready! https://{PROJECT}.dev
+      """
+
+    When I run `wp site create --slug=foo --path={PROJECT}`
+    Then STDOUT should contain:
+      """
+      //foo.{PROJECT}.dev/
+      """

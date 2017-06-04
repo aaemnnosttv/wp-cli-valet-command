@@ -119,14 +119,22 @@ class WordPressInstaller implements InstallerInterface
     {
         Command::debug('Installing WordPress');
 
-        WP::core('install', [
+        $install = 'install';
+        $args = [
             'url'            => $this->props->fullUrl(),
             'title'          => $this->props->site_name,
             'admin_user'     => $this->props->option('admin_user'),
             'admin_password' => $this->props->option('admin_password'),
             'admin_email'    => $this->props->option('admin_email', "admin@{$this->props->domain}"),
             'skip-email'     => true,
-        ]);
+        ];
+
+        if ($this->props->option('multisite')) {
+            $install = 'multisite-install';
+            $args['subdomains'] = $this->props->option('multisite') === 'subdomain';
+        }
+
+        WP::core($install, $args);
     }
 
     /**
