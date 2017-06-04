@@ -164,6 +164,27 @@ $steps->Given('/^a random string as {(\w+)}$/', function($world, $var_name) {
     $world->variables[ $var_name ] = substr(md5(uniqid('', true)), 0, 8);
 });
 
+$steps->Given('/^a WP install in \'([^\']*)\' with database \'([^\']*)\'$/', function($world, $subdir, $db_name) {
+    /* @var FeatureContext $world */
+    $subdir = $world->replace_variables( $subdir );
+    $db_name = $world->replace_variables( $db_name );
+
+    $world->create_db( $db_name );
+    $world->create_run_dir();
+    $world->download_wp( $subdir );
+    $world->create_config( $subdir, $db_name );
+
+    $install_args = array(
+        'url' => 'http://example.com',
+        'title' => 'WP CLI Site',
+        'admin_user' => 'admin',
+        'admin_email' => 'admin@example.com',
+        'admin_password' => 'password1'
+    );
+
+    $world->proc( 'wp core install', $install_args, $subdir )->run_check();
+});
+
 $steps->Given('/^a misconfigured WP_CONTENT_DIR constant directory$/',
 	function($world) {
 		$wp_config_path = $world->variables['RUN_DIR'] . "/wp-config.php";
@@ -176,3 +197,4 @@ $steps->Given('/^a misconfigured WP_CONTENT_DIR constant directory$/',
 		file_put_contents( $wp_config_path, $wp_config_code );
 	}
 );
+
