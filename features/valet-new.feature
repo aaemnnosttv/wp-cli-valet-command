@@ -27,7 +27,7 @@ Feature: Create a new install.
     And a random string as {ADMIN}
     And a random string as {PATH}
 
-    When I run `wp valet new {PROJECT} --in={PATH} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=4.5 --dbname=wp_cli_test --dbprefix={ADMIN}_ --dbuser=wp_cli_test --dbpass=password1`
+    When I run `wp valet new {PROJECT} --in={PATH} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=4.5 --dbname=wp_cli_test --dbprefix={ADMIN}_ `
     Then the {PATH}/{PROJECT}/wp-config.php file should exist
     Then the wp_cli_test database should exist
 
