@@ -199,6 +199,7 @@ class ValetCommand
     public function destroy($args, $assoc_args)
     {
         foreach ($args as $site) {
+            $this->container()->forgetInstance('wp');
             $this->setup_props((array) $site, $assoc_args);
             $this->destroy_site($assoc_args);
         }
@@ -226,10 +227,7 @@ class ValetCommand
 
         try {
             static::debug("Dropping database for {$this->props->site_name}");
-            WP::db('drop', [
-                'yes' => true,
-                'path' => $this->props->fullPath(),
-            ]);
+            WP::db('drop', ['yes' => true]);
         } catch (\Exception $e) {
             $message = get_class($e) . ' ' . $e->getMessage();
             static::debug("Error dropping database: $message");
