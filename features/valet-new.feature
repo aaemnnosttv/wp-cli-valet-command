@@ -104,6 +104,22 @@ Feature: Create a new install.
       //foo.{PROJECT}.dev/
       """
 
+  @multisite
+  Scenario: Sites are created as single site by default.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    When I run `wp valet new {PROJECT}`
+    Then the {PROJECT}/wp-config.php file should exist
+    And STDOUT should contain:
+      """
+      Success: {PROJECT} ready! https://{PROJECT}.dev
+      """
+    When I try `wp site list --path={PROJECT}`
+    Then STDERR should contain:
+      """
+      This is not a multisite install.
+      """
+
   @issue-23
   Scenario: It creates new sites with a safe database name.
     Given an empty directory

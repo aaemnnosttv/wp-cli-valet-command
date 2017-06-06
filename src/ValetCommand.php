@@ -136,7 +136,6 @@ class ValetCommand
      * [--multisite=<type>]
      * : Install as a multisite network.
      * ---
-     * default: directory
      * options:
      *   - directory
      *   - subdomain
