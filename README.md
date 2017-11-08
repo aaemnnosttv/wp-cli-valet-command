@@ -1,11 +1,11 @@
-# WP-CLI Valet Command
+aaemnnosttv/wp-cli-valet-command
+================================
 
 White-glove services for turn-key installs in seconds.
 
-[![Travis Build](https://img.shields.io/travis/aaemnnosttv/wp-cli-valet-command/master.svg)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command)
-[![Packagist](https://img.shields.io/packagist/v/aaemnnosttv/wp-cli-valet-command.svg)](https://packagist.org/packages/aaemnnosttv/wp-cli-valet-command)
+[![Travis Build](https://img.shields.io/travis/aaemnnosttv/wp-cli-valet-command/master.svg)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command) [![Packagist](https://img.shields.io/packagist/v/aaemnnosttv/wp-cli-valet-command.svg)](https://packagist.org/packages/aaemnnosttv/wp-cli-valet-command)
 
-Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing)
+Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
 
 ## Using
 
@@ -128,17 +128,30 @@ this install over https.
 
 ### Prerequisites
 
-This command leverages [Laravel Valet](https://laravel.com/docs/5.2/valet#installation) -- the development environment for Mac minimalists.
-Because of this **support is unfortunately limited to Mac only**.
+This command leverages [Laravel Valet](https://laravel.com/docs/valet) -- an open source development environment for Mac + \*nix minimalists. It runs various commands lightning fast, allowing you to spin up a site in your browser immediately after creating it, without any other configuration, all from a single command.
 
-Follow the [installation instructions](https://laravel.com/docs/5.2/valet#installation) on the Laravel documentation to get started.
-This is what makes it possible to load a site in your browser immediately after creating it, without any other configuration.
+You should also have some understanding of how Valet works, especially the portion on [Serving Sites](https://laravel.com/docs/5.2/valet#serving-sites).
 
-You will also need some understanding of how Valet works, especially the portion on [Serving Sites](https://laravel.com/docs/5.2/valet#serving-sites).
+#### DevEnv Set-Up
+1) MacOS users should set up [Homebrew](https://brew.sh/) first. 
 
-Installing this package requires WP-CLI v0.23.0 or greater. Update to the latest stable release with `wp cli update`.
+2) Follow the [Valet installation instructions](https://laravel.com/docs/valet#installation) on the Laravel documentation to get started.
+
+> _Note: Linux users are encouraged to use [Valet-linux](https://github.com/cpriego/valet-linux) instead, a fork of the original project that shares the same `valet` commands powering this `wp-cli` plugin._
+
+3) Using this package also requires [WP-CLI](http://wp-cli.org/), v0.23.0 or greater. Update, if needed, to the latest stable release with `wp cli update`.
+
+4) Your credentials to create a database should also be stored in `~/my.cnf`.
+
+#### Loading the wp-cli-valet-command package
 
 Once you've done so, you can install this package with `wp package install aaemnnosttv/wp-cli-valet-command`.
+
+Installing this package requires WP-CLI v1.3.0 or greater. Update to the latest stable release with `wp cli update`.
+
+Once you've done so, you can install this package with:
+
+    wp package install git@github.com:aaemnnosttv/wp-cli-valet-command.git
 
 ## Contributing
 
@@ -146,30 +159,25 @@ We appreciate you taking the initiative to contribute to this project.
 
 Contributing isn’t limited to just code. We encourage you to contribute in the way that best fits your abilities, by writing tutorials, giving a demo at your local meetup, helping other users with their support questions, or revising our documentation.
 
+For a more thorough introduction, [check out WP-CLI's guide to contributing](https://make.wordpress.org/cli/handbook/contributing/). This package follows those policy and guidelines.
+
 ### Reporting a bug
 
 Think you’ve found a bug? We’d love for you to help us get it fixed.
 
 Before you create a new issue, you should [search existing issues](https://github.com/aaemnnosttv/wp-cli-valet-command/issues?q=label%3Abug%20) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
 
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/aaemnnosttv/wp-cli-valet-command/issues/new) with the following:
-
-1. What you were doing (e.g. "When I run `wp post list`").
-2. What you saw (e.g. "I see a fatal about a class being undefined.").
-3. What you expected to see (e.g. "I expected to see the list of posts.")
-
-Include as much detail as you can, and clear steps to reproduce if possible.
+Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/aaemnnosttv/wp-cli-valet-command/issues/new). Include as much detail as you can, and clear steps to reproduce if possible. For more guidance, [review our bug report documentation](https://make.wordpress.org/cli/handbook/bug-reports/).
 
 ### Creating a pull request
 
 Want to contribute a new feature? Please first [open a new issue](https://github.com/aaemnnosttv/wp-cli-valet-command/issues/new) to discuss whether the feature is a good fit for the project.
 
-Once you've decided to commit the time to seeing your pull request through, please follow our guidelines for creating a pull request to make sure it's a pleasant experience:
+Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.wordpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.wordpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
 
-1. Create a feature branch for each contribution.
-2. Submit your pull request early for feedback.
-3. Include functional tests with your changes. [Read the WP-CLI documentation](https://wp-cli.org/docs/pull-requests/#functional-tests) for an introduction.
-4. Follow the [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/).
+## Support
+
+Github issues aren't for general support questions, but there are other venues you can try: http://wp-cli.org/#support
 
 
 *This README.md is generated dynamically from the project's codebase using `wp scaffold package-readme` ([doc](https://github.com/wp-cli/scaffold-package-command#wp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
