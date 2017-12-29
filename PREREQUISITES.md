@@ -31,11 +31,35 @@ WP-CLI version:	1.4.1
 
 Update, if needed, to the latest stable release with `wp cli update`.
 
+#### Setting defaults for the wp valet command
+As with other `wp-cli` commands, you can set default attributes when running `wp valet`.
+
+Simply add the appropriate details in `~/.wp-cli/config.yml`:
+
+```
+valet new:
+	project: wp
+	# in: override - defaults to current directory
+    version: latest
+    # locale: - use if not English
+    db: mysql
+    # dbname: defaults to wp_name
+    dbuser: root # or any other local user capable of creating databases (MySQL only)
+    dbpass: # enter the appropriate password if necessary (MySQL only)
+    dbprefix: wp_
+    admin_user: admin
+    admin_pass: admin
+    # unsecure - use without colon if you'd like to override HTTPS
+    # portable - see above
+```
+
+The `wp valet new` defaults are shown here as an example for clarity.
+
 #### Loading the wp-cli-valet-command package
 
 Once you've set up your environment, you can install this package with `wp package install aaemnnosttv/wp-cli-valet-command`.
 
-### Troubleshooting
+#### Troubleshooting
 
 `Error: ERROR 1045 (28000): Access denied for user 'root'@'localhost'`
 The installer halts at the database creation stage because it doesn't have a password for your local `MySQL` instance.
