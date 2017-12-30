@@ -1,5 +1,3 @@
-### Prerequisites
-
 This command leverages [Laravel Valet](https://laravel.com/docs/valet) -- an open source development environment for Mac + \*nix minimalists. 
 
 It runs various commands lightning fast, allowing you to spin up a site in your browser immediately after creating it, without any other configuration, all from a single command.
@@ -13,9 +11,7 @@ You should also understand how Valet works, especially the portion on [Serving S
 
 > _Note: Linux users should use [Valet-linux](https://github.com/cpriego/valet-linux) instead, a fork of the original project that shares most of the same `valet` commands powering this `wp-cli` plugin._
 
-2) Using this package also requires [WP-CLI](http://wp-cli.org/), v0.23.0 or greater. 
-
-Confirm your `wp-cli` environment works by running `wp cli info` and proceed if the output looks something like:
+2) Confirm your `wp-cli` environment works and meets the minimum version specified below by running `wp cli info` and proceed if the output looks something like:
 ```
 PHP binary:	/usr/bin/php7.0
 PHP version:	7.0.22-0ubuntu0.16.04.1
@@ -31,39 +27,4 @@ WP-CLI version:	1.4.1
 
 Update, if needed, to the latest stable release with `wp cli update`.
 
-#### Setting defaults for the wp valet command
-As with other `wp-cli` commands, you can set default attributes when running `wp valet`.
-
-Simply add the appropriate details in `~/.wp-cli/config.yml`:
-
-```
-valet new:
-	project: wp
-	# in: override - defaults to current directory
-    version: latest
-    # locale: - use if not English
-    db: mysql
-    # dbname: defaults to wp_name
-    dbuser: root # or any other local user capable of creating databases (MySQL only)
-    dbpass: # enter the appropriate password if necessary (MySQL only)
-    dbprefix: wp_
-    admin_user: admin
-    admin_pass: admin
-    # unsecure - use without colon if you'd like to override HTTPS
-    # portable - see above
-```
-
-The `wp valet new` defaults are shown here as an example for clarity.
-
 #### Loading the wp-cli-valet-command package
-
-Once you've set up your environment, you can install this package with `wp package install aaemnnosttv/wp-cli-valet-command`.
-
-#### Troubleshooting
-
-`Error: ERROR 1045 (28000): Access denied for user 'root'@'localhost'`
-The installer halts at the database creation stage because it doesn't have a password for your local `MySQL` instance.
-
-Prevent this from happening by appending your `wp valet` commands like such: `wp valet new site --dbpass=local_root_password`.
-
-At this point, you can: 1) Either create a `wp-config.php` file manually or use the `wp config` command, or 2) use `wp valet destroy site` and try again using the `--dbpass` attribute.

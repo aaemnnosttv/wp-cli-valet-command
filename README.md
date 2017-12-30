@@ -5,7 +5,7 @@ White-glove services for turn-key installs in seconds.
 
 [![Travis Build](https://img.shields.io/travis/aaemnnosttv/wp-cli-valet-command/master.svg)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command) [![Packagist](https://img.shields.io/packagist/v/aaemnnosttv/wp-cli-valet-command.svg)](https://packagist.org/packages/aaemnnosttv/wp-cli-valet-command)
 
-Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
+Quick links: [Using](#using) | [Installing](#installing) | [Troubleshooting](#troubleshooting) | [Support](#support) | [Contributing](#contributing)
 
 ## Using
 
@@ -126,8 +126,6 @@ this install over https.
 
 ## Installing
 
-### Prerequisites
-
 This command leverages [Laravel Valet](https://laravel.com/docs/valet) -- an open source development environment for Mac + \*nix minimalists. 
 
 It runs various commands lightning fast, allowing you to spin up a site in your browser immediately after creating it, without any other configuration, all from a single command.
@@ -141,9 +139,7 @@ You should also understand how Valet works, especially the portion on [Serving S
 
 > _Note: Linux users should use [Valet-linux](https://github.com/cpriego/valet-linux) instead, a fork of the original project that shares most of the same `valet` commands powering this `wp-cli` plugin._
 
-2) Using this package also requires [WP-CLI](http://wp-cli.org/), v0.23.0 or greater. 
-
-Confirm your `wp-cli` environment works by running `wp cli info` and proceed if the output looks something like:
+2) Confirm your `wp-cli` environment works and meets the minimum version specified below by running `wp cli info` and proceed if the output looks something like:
 ```
 PHP binary:	/usr/bin/php7.0
 PHP version:	7.0.22-0ubuntu0.16.04.1
@@ -159,48 +155,63 @@ WP-CLI version:	1.4.1
 
 Update, if needed, to the latest stable release with `wp cli update`.
 
-#### Setting defaults for the wp valet command
-As with other `wp-cli` commands, you can set default attributes when running `wp valet`.
-
-Simply add the appropriate details in `~/.wp-cli/config.yml`:
-
-```
-valet new:
-	project: wp
-	# in: override - defaults to current directory
-    version: latest
-    # locale: - use if not English
-    db: mysql
-    # dbname: defaults to wp_name
-    dbuser: root # or any other local user capable of creating databases (MySQL only)
-    dbpass: # enter the appropriate password if necessary (MySQL only)
-    dbprefix: wp_
-    admin_user: admin
-    admin_pass: admin
-    # unsecure - use without colon if you'd like to override HTTPS
-    # portable - see above
-```
-
-The `wp valet new` defaults are shown here as an example for clarity.
-
 #### Loading the wp-cli-valet-command package
-
-Once you've set up your environment, you can install this package with `wp package install aaemnnosttv/wp-cli-valet-command`.
-
-#### Troubleshooting
-
-`Error: ERROR 1045 (28000): Access denied for user 'root'@'localhost'`
-The installer halts at the database creation stage because it doesn't have a password for your local `MySQL` instance.
-
-Prevent this from happening by appending your `wp valet` commands like such: `wp valet new site --dbpass=local_root_password`.
-
-At this point, you can: 1) Either create a `wp-config.php` file manually or use the `wp config` command, or 2) use `wp valet destroy site` and try again using the `--dbpass` attribute.
 
 Installing this package requires WP-CLI v1.3.0 or greater. Update to the latest stable release with `wp cli update`.
 
 Once you've done so, you can install this package with:
 
     wp package install git@github.com:aaemnnosttv/wp-cli-valet-command.git
+
+## Troubleshooting
+
+`Error: ERROR 1045 (28000): Access denied for user 'root'@'localhost'`
+The installer halts at the database creation stage because it doesn't have a password for your local `MySQL` instance.
+
+Prevent this from happening by appending your `wp valet` commands like such: `wp valet new site --dbpass=local_root_password`.
+
+At this point, you can: 
+1) Either create a `wp-config.php` file manually,
+2) use `wp config`command to have wp-cli create one for you, or 
+3) use `wp valet destroy site` and try running your `wp valet new` command again, this time using the `--dbpass` attribute.
+
+### Configuring Alternate Defaults
+As with other `wp-cli` commands, you can set default attributes when running `wp valet`.
+
+Simply add the appropriate details in `~/.wp-cli/config.yml`:
+
+```yml
+valet new:
+  ## Uncomment or update the relevant lines when necessary to set your own defaults.
+  project: wp # or bedrock
+  # in: # override - defaults to current directory
+  version: latest
+  # locale:  # use if not English
+  db: mysql # or sqlite
+  # dbname: # defaults to wp_name
+  dbuser: root # or any other local user capable of creating databases (MySQL only)
+  # dbpass: # enter the appropriate password if necessary (MySQL only)
+  dbprefix: wp_
+  admin_user: admin
+  admin_pass: admin
+  ## Boolean options can also be configured, too.
+  # unsecure: false # set to true to override
+  # portable: false # set to true to override
+```
+
+The `wp valet new` defaults are shown here as an example for clarity.
+
+One simple usage for the `config.yml` could look like
+```yml
+valet new:
+  dbuser: root # or any db creating user
+  dbpass: password # set yours here
+```
+to enable `wp valet new site` to spin up a full, live, running local WordPress site in ~3 seconds without any additional parameters.
+
+## Support
+
+Github issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
 
 ## Contributing
 
@@ -223,10 +234,6 @@ Once you’ve done a bit of searching and discovered there isn’t an open or fi
 Want to contribute a new feature? Please first [open a new issue](https://github.com/aaemnnosttv/wp-cli-valet-command/issues/new) to discuss whether the feature is a good fit for the project.
 
 Once you've decided to commit the time to seeing your pull request through, [please follow our guidelines for creating a pull request](https://make.wordpress.org/cli/handbook/pull-requests/) to make sure it's a pleasant experience. See "[Setting up](https://make.wordpress.org/cli/handbook/pull-requests/#setting-up)" for details specific to working on this package locally.
-
-## Support
-
-Github issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
 
 
 *This README.md is generated dynamically from the project's codebase using `wp scaffold package-readme` ([doc](https://github.com/wp-cli/scaffold-package-command#wp-scaffold-package-readme)). To suggest changes, please submit a pull request against the corresponding part of the codebase.*
