@@ -13,7 +13,10 @@ class SystemValet extends ShellCommand implements ValetInterface
      */
     public function domain()
     {
-        return trim($this->run('domain')->stdout);
+        $result = $this->run('domain')->stdout);
+        // get just the tld suffix from the response
+        preg_match('/(?:\.?)([\S]*)*$/', $result, $matches);
+        return trim($matches[0], '.');
     }
 
     /**
