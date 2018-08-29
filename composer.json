@@ -24,18 +24,22 @@
         ]
     },
     "require": {
-        "php": "^5.5|^7.0",
+        "php": ">=5.5",
         "illuminate/container": "^5.1",
-        "symfony/filesystem": "^2.7 | ^3.0"
+        "symfony/filesystem": ">=2.7",
+        "wp-cli/wp-cli": "^1 || ^2",
+        "wp-cli/config-command": "^1 || ^2",
+        "wp-cli/core-command": "^1 || ^2",
+        "wp-cli/db-command": "^1 || ^2"
     },
     "require-dev": {
-        "wp-cli/wp-cli": "^0.24.1",
         "behat/behat": "~2.5",
-        "johnpbloch/wordpress": "^4.6"
+        "wp-cli/entity-command": "^1 || ^2",
+        "wp-cli/scaffold-package-command": "^0.5.0"
     },
     "scripts": {
         "update-readme": "wp scaffold package-readme . --force",
-        "run-behat": "WP_CLI_BIN_DIR=$PWD/vendor/bin vendor/bin/behat --ansi --format=progress"
+        "run-behat": "behat --ansi"
     },
     "extra": {
         "commands": [
