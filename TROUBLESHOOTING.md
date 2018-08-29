@@ -26,7 +26,7 @@ valet new:
   # dbpass: # enter the appropriate password if necessary (MySQL only)
   dbprefix: wp_
   admin_user: admin
-  admin_pass: admin
+  admin_password: admin
   ## Boolean options can also be configured, too.
   # unsecure: false # set to true to override
   # portable: false # set to true to override

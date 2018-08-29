@@ -157,7 +157,7 @@ Update, if needed, to the latest stable release with `wp cli update`.
 
 #### Loading the wp-cli-valet-command package
 
-Installing this package requires WP-CLI v1.3.0 or greater. Update to the latest stable release with `wp cli update`.
+Installing this package requires WP-CLI v1 || v2 or greater. Update to the latest stable release with `wp cli update`.
 
 Once you've done so, you can install this package with:
 
