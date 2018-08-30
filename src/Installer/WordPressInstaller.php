@@ -96,18 +96,9 @@ class WordPressInstaller implements InstallerInterface
      */
     public function createSqlite()
     {
-        Command::debug('Installing SQLite DB');
+        Command::debug('Installing SQLite DB drop-in');
 
         $this->installSqliteIntegration();
-
-        copy(
-            $this->contentPath('plugins/sqlite-integration/db.php'),
-            $this->contentPath('db.php')
-        );
-
-        if (! file_exists($this->contentPath('db.php'))) {
-            WP_CLI::error('sqlite-integration install failed');
-        }
     }
 
     /**
@@ -130,48 +121,23 @@ class WordPressInstaller implements InstallerInterface
     }
 
     /**
-     * Install the sqlite-integration plugin, and database drop-in.
-     *
-     * We can't just run `plugin install ...' because it requires the database to be initialized.
-     *
-     * @param  string|null $version The specific plugin version to install
+     * Install the sqlite integration database drop-in.
      */
-    protected function installSqliteIntegration($version = null)
+    protected function installSqliteIntegration()
     {
-        /**
-         * If no version is requested, fetch the latest from the api
-         */
-        if (! $version) {
-            $response = json_decode(file_get_contents("https://api.wordpress.org/plugins/info/1.0/sqlite-integration.json"));
-
-            if (! $response) {
-                WP_CLI::error('There was a problem parsing the response from the wordpress.org api. Try again!');
-            }
-
-            $version = $response->version;
-        }
-
         $cache = WP_CLI::get_cache();
-        $cache_key = "aaemnnosttv/wp-cli-valet-command/sqlite-integration.{$version}.zip";
-        $local_file = "/tmp/sqlite-integration.{$version}.zip";
+        $version = 'a7ee20a021f9df42cd1880ca926fa0ea45c39dc8';
+        $cache_key = "aaemnnosttv/wp-cli-valet-command/wp-sqlite-db/$version/db.php";
+        $local_file = $this->contentPath('db.php');
 
         if ($cache->has($cache_key)) {
             Command::debug("Using cached file: $cache_key");
             $cache->export($cache_key, $local_file);
         } else {
-            file_put_contents($local_file, file_get_contents("https://downloads.wordpress.org/plugin/sqlite-integration.{$version}.zip"));
+            file_put_contents($local_file, file_get_contents("https://github.com/aaemnnosttv/wp-sqlite-db/raw/$version/db.php"));
 
             WP_CLI::get_cache()->import($cache_key, $local_file);
         }
-
-        Command::debug('Extracting sqlite-integration');
-
-        $zip = new \ZipArchive;
-        $zip->open($local_file);
-        $zip->extractTo($this->contentPath('plugins/'));
-        $zip->close();
-
-        unlink($local_file);
     }
 
     /**

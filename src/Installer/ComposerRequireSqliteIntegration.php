@@ -9,17 +9,22 @@ use WP_CLI_Valet\ValetCommand as Command;
 trait ComposerRequireSqliteIntegration
 {
     /**
-     * Install the sqlite plugin.
-     *
-     * @param string|null $version
+     * Install the sqlite database drop-in.
      */
-    public function installSqliteIntegration($version = null)
+    public function installSqliteIntegration()
     {
-        Command::debug('Requiring sqlite-integration with Composer.');
+        Command::debug('Requiring wp-sqlite-db driver with Composer');
 
-        Composer::_require('wpackagist-plugin/sqlite-integration', [
-            'working-dir'    => Command::resolve(Props::class)->projectRoot(),
+        $workingDir = Command::resolve(Props::class)->projectRoot();
+        $flags      = [
+            'working-dir'    => $workingDir,
             'no-interaction' => true,
-        ]);
+        ];
+
+        Composer::_require('koodimonni/composer-dropin-installer', $flags);
+
+        Composer::config('extra.dropin-paths.web/app/', 'package:aaemnnosttv/wp-sqlite-db:db.php', $flags);
+
+        Composer::_require('aaemnnosttv/wp-sqlite-db:dev-master', $flags);
     }
 }
