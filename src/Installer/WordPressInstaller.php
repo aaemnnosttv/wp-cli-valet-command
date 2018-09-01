@@ -126,8 +126,11 @@ class WordPressInstaller implements InstallerInterface
     protected function installSqliteIntegration()
     {
         $cache = WP_CLI::get_cache();
+        $token = getenv('WP_CLI_VALET_GITHUB_TOKEN');
         $master_branch = \WP_CLI\Utils\http_request('GET',
-            'https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/branches/master'
+            'https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/branches/master',
+            null,
+            $token ? ['Authorization' => "token $token"] : []
         );
 
         if (! $master_branch->success) {
