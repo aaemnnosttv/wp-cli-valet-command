@@ -126,6 +126,40 @@ class WordPressInstaller implements InstallerInterface
     protected function installSqliteIntegration()
     {
         $cache = WP_CLI::get_cache();
+        $version = $this->getWpSqliteDbVersion();
+        Command::debug("Installing wp-sqlite-db: $version");
+        $cache_key = "aaemnnosttv/wp-sqlite-db/raw/$version/src/db.php";
+
+        if ($cache->has($cache_key)) {
+            Command::debug("Using cached file: $cache_key");
+        } else {
+            Command::debug("Downloading: https://github.com/$cache_key");
+            $http_request = \WP_CLI\Utils\http_request('GET', "https://github.com/$cache_key");
+            Command::debug($http_request->status_code, $http_request->headers->getAll());
+
+            if ($http_request->success) {
+                $cache->write($cache_key, $http_request->body);
+            } else {
+                WP_CLI::error("Failed to download $cache_key");
+            }
+        }
+
+        $cache->export($cache_key, $this->contentPath('db.php'));
+    }
+
+    /**
+     * Get the latest version to install.
+     *
+     * Attempts to fetch the latest commit hash from the GitHub API, with a fallback to 'master'.
+     * Technically it points to the same file, but a hash is better for caching.
+     *
+     * @return string
+     */
+    protected function getWpSqliteDbVersion()
+    {
+        $cache = WP_CLI::get_cache();
+        $cache_key = 'aaemnnosttv/wp-cli-valet-command/wp-sqlite-db/sha';
+        // A token isn't necessary but helps rule out rate limiting as a point of failure in CI
         $token = getenv('WP_CLI_VALET_GITHUB_TOKEN');
         $master_branch = \WP_CLI\Utils\http_request('GET',
             'https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/branches/master',
@@ -133,29 +167,23 @@ class WordPressInstaller implements InstallerInterface
             $token ? ['Authorization' => "token $token"] : []
         );
 
-        if (! $master_branch->success) {
-            WP_CLI::error("Failed to fetch the latest data for wp-sqlite-db.\n" . var_export($master_branch, true));
+        // Always try to get the latest commit hash, if possible.
+        if ($master_branch->success && ($master = json_decode($master_branch->body, true)) && isset($master['commit']['sha'])) {
+            $cache->write($cache_key, $master['commit']['sha']);
+
+            return $master['commit']['sha'];
+        } elseif ($cache->has($cache_key)) {
+            // If we got here, the API request failed for some reason, so use a stale version if it exists
+            $version = $cache->read($cache_key);
+
+            WP_CLI::warning("Unable to get latest wp-sqlite-db commit, falling back to $version (cached).");
+
+            return $version;
         }
 
-        $master = json_decode($master_branch->body, true);
-        $version = isset($master['commit']['sha']) ? $master['commit']['sha'] : 'master';
-        $cache_key = "aaemnnosttv/wp-sqlite-db/raw/$version/src/db.php";
-        $local_file = $this->contentPath('db.php');
+        WP_CLI::warning('Unable to get latest wp-sqlite-db commit, falling back to master.');
 
-        if ($cache->has($cache_key)) {
-            Command::debug("Using cached file: $cache_key");
-            $cache->export($cache_key, $local_file);
-        } else {
-            $http_request = \WP_CLI\Utils\http_request('GET', "https://github.com/$cache_key");
-
-            if (! $http_request->success) {
-                WP_CLI::error("Failed to download $cache_key");
-            }
-
-            file_put_contents($local_file, $http_request->body);
-
-            WP_CLI::get_cache()->import($cache_key, $local_file);
-        }
+        return 'master';
     }
 
     /**
