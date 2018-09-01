@@ -134,7 +134,7 @@ class WordPressInstaller implements InstallerInterface
         );
 
         if (! $master_branch->success) {
-            WP_CLI::error('Failed to fetch the latest data for wp-sqlite-db.');
+            WP_CLI::error("Failed to fetch the latest data for wp-sqlite-db.\n" . var_export($master_branch, true));
         }
 
         $master = json_decode($master_branch->body, true);
