@@ -121,20 +121,35 @@ class WordPressInstaller implements InstallerInterface
     }
 
     /**
-     * Install the sqlite integration database drop-in.
+     * Install the sqlite database drop-in.
      */
     protected function installSqliteIntegration()
     {
         $cache = WP_CLI::get_cache();
-        $version = 'a7ee20a021f9df42cd1880ca926fa0ea45c39dc8';
-        $cache_key = "aaemnnosttv/wp-cli-valet-command/wp-sqlite-db/$version/db.php";
+        $master_branch = \WP_CLI\Utils\http_request('GET',
+            'https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/branches/master'
+        );
+
+        if (! $master_branch->success) {
+            WP_CLI::error('Failed to fetch the latest data for wp-sqlite-db.');
+        }
+
+        $master = json_decode($master_branch->body, true);
+        $version = isset($master['commit']['sha']) ? $master['commit']['sha'] : 'master';
+        $cache_key = "aaemnnosttv/wp-sqlite-db/raw/$version/src/db.php";
         $local_file = $this->contentPath('db.php');
 
         if ($cache->has($cache_key)) {
             Command::debug("Using cached file: $cache_key");
             $cache->export($cache_key, $local_file);
         } else {
-            file_put_contents($local_file, file_get_contents("https://github.com/aaemnnosttv/wp-sqlite-db/raw/$version/db.php"));
+            $http_request = \WP_CLI\Utils\http_request('GET', "https://github.com/$cache_key");
+
+            if (! $http_request->success) {
+                WP_CLI::error("Failed to download $cache_key");
+            }
+
+            file_put_contents($local_file, $http_request->body);
 
             WP_CLI::get_cache()->import($cache_key, $local_file);
         }
