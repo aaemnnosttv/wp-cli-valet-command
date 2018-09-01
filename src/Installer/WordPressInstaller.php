@@ -96,18 +96,9 @@ class WordPressInstaller implements InstallerInterface
      */
     public function createSqlite()
     {
-        Command::debug('Installing SQLite DB');
+        Command::debug('Installing SQLite DB drop-in');
 
         $this->installSqliteIntegration();
-
-        copy(
-            $this->contentPath('plugins/sqlite-integration/db.php'),
-            $this->contentPath('db.php')
-        );
-
-        if (! file_exists($this->contentPath('db.php'))) {
-            WP_CLI::error('sqlite-integration install failed');
-        }
     }
 
     /**
@@ -130,48 +121,69 @@ class WordPressInstaller implements InstallerInterface
     }
 
     /**
-     * Install the sqlite-integration plugin, and database drop-in.
-     *
-     * We can't just run `plugin install ...' because it requires the database to be initialized.
-     *
-     * @param  string|null $version The specific plugin version to install
+     * Install the sqlite database drop-in.
      */
-    protected function installSqliteIntegration($version = null)
+    protected function installSqliteIntegration()
     {
-        /**
-         * If no version is requested, fetch the latest from the api
-         */
-        if (! $version) {
-            $response = json_decode(file_get_contents("https://api.wordpress.org/plugins/info/1.0/sqlite-integration.json"));
-
-            if (! $response) {
-                WP_CLI::error('There was a problem parsing the response from the wordpress.org api. Try again!');
-            }
-
-            $version = $response->version;
-        }
-
         $cache = WP_CLI::get_cache();
-        $cache_key = "aaemnnosttv/wp-cli-valet-command/sqlite-integration.{$version}.zip";
-        $local_file = "/tmp/sqlite-integration.{$version}.zip";
+        $version = $this->getWpSqliteDbVersion();
+        Command::debug("Installing wp-sqlite-db: $version");
+        $cache_key = "aaemnnosttv/wp-sqlite-db/raw/$version/src/db.php";
 
         if ($cache->has($cache_key)) {
             Command::debug("Using cached file: $cache_key");
-            $cache->export($cache_key, $local_file);
         } else {
-            file_put_contents($local_file, file_get_contents("https://downloads.wordpress.org/plugin/sqlite-integration.{$version}.zip"));
+            Command::debug("Downloading: https://github.com/$cache_key");
+            $http_request = \WP_CLI\Utils\http_request('GET', "https://github.com/$cache_key");
+            Command::debug($http_request->status_code, $http_request->headers->getAll());
 
-            WP_CLI::get_cache()->import($cache_key, $local_file);
+            if ($http_request->success) {
+                $cache->write($cache_key, $http_request->body);
+            } else {
+                WP_CLI::error("Failed to download $cache_key");
+            }
         }
 
-        Command::debug('Extracting sqlite-integration');
+        $cache->export($cache_key, $this->contentPath('db.php'));
+    }
 
-        $zip = new \ZipArchive;
-        $zip->open($local_file);
-        $zip->extractTo($this->contentPath('plugins/'));
-        $zip->close();
+    /**
+     * Get the latest version to install.
+     *
+     * Attempts to fetch the latest commit hash from the GitHub API, with a fallback to 'master'.
+     * Technically it points to the same file, but a hash is better for caching.
+     *
+     * @return string
+     */
+    protected function getWpSqliteDbVersion()
+    {
+        $cache = WP_CLI::get_cache();
+        $cache_key = 'aaemnnosttv/wp-cli-valet-command/wp-sqlite-db/sha';
+        // A token isn't necessary but helps rule out rate limiting as a point of failure in CI
+        $token = getenv('WP_CLI_VALET_GITHUB_TOKEN');
+        $master_branch = \WP_CLI\Utils\http_request('GET',
+            'https://api.github.com/repos/aaemnnosttv/wp-sqlite-db/branches/master',
+            null,
+            $token ? ['Authorization' => "token $token"] : []
+        );
 
-        unlink($local_file);
+        // Always try to get the latest commit hash, if possible.
+        if ($master_branch->success && ($master = json_decode($master_branch->body, true)) && isset($master['commit']['sha'])) {
+            $cache->write($cache_key, $master['commit']['sha']);
+
+            return $master['commit']['sha'];
+        } elseif ($cache->has($cache_key)) {
+            // If we got here, the API request failed for some reason, so use a stale version if it exists
+            $version = $cache->read($cache_key);
+
+            WP_CLI::warning("Unable to get latest wp-sqlite-db commit, falling back to $version (cached).");
+
+            return $version;
+        }
+
+        WP_CLI::warning('Unable to get latest wp-sqlite-db commit, falling back to master.');
+
+        return 'master';
     }
 
     /**
