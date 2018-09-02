@@ -48,6 +48,11 @@ class ValetCommand
         $container->singleton('valet', getenv('BEHAT_RUN') ? FakeValet::class : SystemValet::class);
         $container->singleton('wp', SystemWp::class);
         $container->singleton('composer', SystemComposer::class);
+        $container->singleton('config', function () {
+            return getenv('BEHAT_RUN')
+                ? new ValetConfig(['tld' => 'dev'])
+                : ValetConfig::loadSystem();
+        });
 
         $container->bind('wp-installer', WordPressInstaller::class);
         $container->bind('bedrock-installer', BedrockInstaller::class);
