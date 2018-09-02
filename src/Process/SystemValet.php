@@ -7,16 +7,6 @@ class SystemValet extends ShellCommand implements ValetInterface
     protected $command = 'valet';
 
     /**
-     * Get the local domain served by Valet.
-     *
-     * @return string
-     */
-    public function domain()
-    {
-        return trim($this->run('domain')->stdout);
-    }
-
-    /**
      * Secure the installation with a self-signed TLS certificate.
      *
      * @param string $domain
