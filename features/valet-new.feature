@@ -71,3 +71,15 @@ Feature: Create a new install.
       """
       Success: {PROJECT} ready! http://{PROJECT}.dev
       """
+
+  @issue-23
+  Scenario: It creates new sites with a safe database name.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    And the wp_app_{PROJECT} database should not exist
+    When I run `wp valet new app.{PROJECT}`
+    Then STDOUT should contain:
+      """
+      Success: app.{PROJECT} ready! https://app.{PROJECT}.dev
+      """
+    And the wp_app_{PROJECT} database should exist
