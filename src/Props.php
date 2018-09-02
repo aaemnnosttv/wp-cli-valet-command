@@ -33,8 +33,8 @@ class Props
      */
     public function populate()
     {
-        $this->site_name = preg_replace('/^a-zA-Z/', '-', $this->positional[0]);
-        $this->domain    = sprintf('%s.%s', $this->site_name, Valet::domain());
+        $this->site_name = preg_replace('/[^a-zA-Z0-9\.]/', '-', $this->positional[0]);
+        $this->domain    = sprintf('%s.%s', $this->site_name, Config::get('tld') ?: Config::get('domain'));
     }
 
     /**
