@@ -161,5 +161,5 @@ $steps->Given('/^a random project name as {PROJECT}$/', function($world) {
 });
 
 $steps->Given('/^a random string as {(\w+)}$/', function($world, $var_name) {
-    $world->variables[ $var_name ] = substr(md5(uniqid('', true)), 0, 8);
+    $world->variables[ $var_name ] = substr(uniqid('v'), 0, 8); // ensure the string starts with a letter
 });
