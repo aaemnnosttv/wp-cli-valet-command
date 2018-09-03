@@ -4,3 +4,4 @@ node_modules/
 vendor/
 .idea
 /wordpress
+/wp-content
