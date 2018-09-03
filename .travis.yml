@@ -15,10 +15,6 @@ before_script:
 
 script: composer run-behat
 
-cache:
-  directories:
-    - vendor
-
 notifications:
   email:
     on_success: never
