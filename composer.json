@@ -36,7 +36,10 @@
         "behat/behat": "~2.5",
         "wp-cli/entity-command": "^1 || ^2",
         "wp-cli/eval-command": "^1 || ^2",
-        "wp-cli/scaffold-package-command": "^0.5.0"
+        "wp-cli/scaffold-package-command": "^0.5.0",
+        "koodimonni/composer-dropin-installer": "^1.2",
+        "roots/bedrock": "^1.8",
+        "aaemnnosttv/wp-sqlite-db": "^1.0"
     },
     "scripts": {
         "update-readme": "wp scaffold package-readme . --force",
