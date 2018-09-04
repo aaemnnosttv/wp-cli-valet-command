@@ -27,19 +27,19 @@
         "php": ">=5.5",
         "illuminate/container": "^5.1",
         "symfony/filesystem": "^2.7 || ^3 || ^4",
-        "wp-cli/wp-cli": "^1 || ^2",
         "wp-cli/config-command": "^1 || ^2",
         "wp-cli/core-command": "^1 || ^2",
-        "wp-cli/db-command": "^1 || ^2"
+        "wp-cli/db-command": "^1 || ^2",
+        "wp-cli/wp-cli": "^1 || ^2"
     },
     "require-dev": {
+        "aaemnnosttv/wp-sqlite-db": "^1.0",
         "behat/behat": "~2.5",
-        "wp-cli/entity-command": "^1 || ^2",
-        "wp-cli/eval-command": "^1 || ^2",
-        "wp-cli/scaffold-package-command": "^0.5.0",
         "koodimonni/composer-dropin-installer": "^1.2",
         "roots/bedrock": "^1.8",
-        "aaemnnosttv/wp-sqlite-db": "^1.0"
+        "wp-cli/entity-command": "^1 || ^2",
+        "wp-cli/eval-command": "^1 || ^2",
+        "wp-cli/scaffold-package-command": "^0.5.0"
     },
     "scripts": {
         "update-readme": "wp scaffold package-readme . --force",
@@ -69,5 +69,8 @@
                 "pre": "TROUBLESHOOTING.md"
             }
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }
