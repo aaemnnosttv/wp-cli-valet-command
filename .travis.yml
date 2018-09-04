@@ -6,7 +6,7 @@ php:
   - 7.0
   - 5.6
 
-install: composer install
+install: travis_retry composer install
 
 before_script:
   - composer validate --strict
@@ -14,10 +14,6 @@ before_script:
   - mysql -e 'GRANT ALL PRIVILEGES ON wp_cli_test.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "password1"' -uroot
 
 script: composer run-behat
-
-cache:
-  directories:
-    - vendor
 
 notifications:
   email:
