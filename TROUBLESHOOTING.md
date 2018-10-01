@@ -3,9 +3,9 @@ The installer halts at the database creation stage because it doesn't have a pas
 
 Prevent this from happening by appending your `wp valet` commands like such: `wp valet new site --dbpass=local_root_password`.
 
-At this point, you can: 
+At this point, you can:
 1) Either create a `wp-config.php` file manually,
-2) use `wp config`command to have wp-cli create one for you, or 
+2) use `wp config`command to have wp-cli create one for you, or
 3) use `wp valet destroy site` and try running your `wp valet new` command again, this time using the `--dbpass` attribute.
 
 ### Configuring Alternate Defaults
@@ -21,6 +21,7 @@ valet new:
   version: latest
   # locale:  # use if not English
   db: mysql # or sqlite
+  # dbhost: # defaults to localhost
   # dbname: # defaults to wp_name
   dbuser: root # or any other local user capable of creating databases (MySQL only)
   # dbpass: # enter the appropriate password if necessary (MySQL only)

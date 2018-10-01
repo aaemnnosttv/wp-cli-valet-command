@@ -101,6 +101,10 @@ class ValetCommand
      *   - sqlite
      * ---
      *
+     * * [--dbhost=<dbhost>]
+     * : Database host.
+     * Defaults to 'localhost'.
+     *
      * [--dbname=<dbname>]
      * : Database name (MySQL only).
      * Defaults to 'wp_<name>'.

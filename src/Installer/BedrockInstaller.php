@@ -40,7 +40,7 @@ class BedrockInstaller extends WordPressInstaller
                 'database_name',
                 'database_user',
                 'database_password',
-                'database_host',
+                '# DB_HOST=localhost',
                 'http://example.com',
                 '# DB_PREFIX=wp_'
             ],
@@ -48,7 +48,7 @@ class BedrockInstaller extends WordPressInstaller
                 $this->props->databaseName(),
                 $this->props->option('dbuser'),
                 $this->props->databasePassword(),
-                $this->props->option('dbhost', 'localhost'),
+                sprintf('DB_HOST=%s', $this->props->option('dbhost', 'localhost')),
                 $this->props->fullUrl(),
                 sprintf('DB_PREFIX=%s', $this->props->option('dbprefix'))
             ],

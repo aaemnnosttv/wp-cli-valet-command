@@ -59,6 +59,10 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 		  - sqlite
 		---
 
+    [--dbhost=<dbhost>]
+        Database host.
+        Defaults to 'localhost'.
+
 	[--dbname=<dbname>]
 		Database name (MySQL only).
 		Defaults to 'wp_<name>'.
@@ -126,7 +130,7 @@ this install over https.
 
 ## Installing
 
-This command leverages [Laravel Valet](https://laravel.com/docs/valet) -- an open source development environment for Mac + \*nix minimalists. 
+This command leverages [Laravel Valet](https://laravel.com/docs/valet) -- an open source development environment for Mac + \*nix minimalists.
 
 It runs various commands lightning fast, allowing you to spin up a site in your browser immediately after creating it, without any other configuration, all from a single command.
 
@@ -149,7 +153,7 @@ WP-CLI vendor dir:	phar://wp-cli.phar/vendor
 WP_CLI phar path:	/home/user/wp-cli-valet-command
 WP-CLI packages dir:	/home/user/.wp-cli/packages/
 WP-CLI global config:	/home/user/.wp-cli/config.yml
-WP-CLI project config:	
+WP-CLI project config:
 WP-CLI version:	1.4.1
 ```
 
@@ -170,9 +174,9 @@ The installer halts at the database creation stage because it doesn't have a pas
 
 Prevent this from happening by appending your `wp valet` commands like such: `wp valet new site --dbpass=local_root_password`.
 
-At this point, you can: 
+At this point, you can:
 1) Either create a `wp-config.php` file manually,
-2) use `wp config`command to have wp-cli create one for you, or 
+2) use `wp config`command to have wp-cli create one for you, or
 3) use `wp valet destroy site` and try running your `wp valet new` command again, this time using the `--dbpass` attribute.
 
 ### Configuring Alternate Defaults
