@@ -144,6 +144,12 @@ class WordPressInstaller implements InstallerInterface
             }
         }
 
+        // Ensure wp-content directory exists as it will not
+        // if skip-content is passed.
+        if (! is_dir($this->contentPath())) {
+            mkdir($this->contentPath(), 0755, true);
+        }
+
         $cache->export($cache_key, $this->contentPath('db.php'));
     }
 
