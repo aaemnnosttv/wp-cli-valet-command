@@ -83,3 +83,22 @@ Feature: Create a new install.
       Success: app.{PROJECT} ready! https://app.{PROJECT}.dev
       """
     And the wp_app_{PROJECT} database should exist
+
+  @issue-51
+  Scenario: skip-content is compatible with using sqlite for the DB.
+    Given an empty directory
+    And a wp-cli.yml file:
+      """
+      core download:
+        skip-content: true
+      """
+    And a random project name as {PROJECT}
+    When I run `wp valet new {PROJECT} --db=sqlite`
+    Then the {PROJECT}/wp-config.php file should exist
+    And the {PROJECT}/wp-content/db.php file should exist
+    And the wp_{PROJECT} database should not exist
+    And STDOUT should contain:
+      """
+      Success: {PROJECT} ready! https://{PROJECT}.dev
+      """
+
