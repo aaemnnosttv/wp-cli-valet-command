@@ -63,6 +63,10 @@ class ValetCommand
      *
      * This command will spin up a new WordPress installation -- complete with database and https
      * _ready-to-use in your browser_ faster than you can put your pants on.
+     * 
+     * **NB** If you have not used `valet park` for the directory or parent directory you are 
+     * running the installation in you need to do a `valet link` to make sure the site will run
+     * without running into 404s.
      *
      * ## OPTIONS
      *
