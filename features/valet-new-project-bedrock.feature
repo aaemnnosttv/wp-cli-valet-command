@@ -52,7 +52,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
     When I run `wp valet new {PROJECT} --project=bedrock --in={PATH} --dbprefix=foo`
     Then the {PATH}/{PROJECT}/.env file should contain:
       """
-      DB_PREFIX=foo
+      DB_PREFIX='foo'
       """
     And I run `wp eval 'echo getenv("DB_PREFIX");' --path={PATH}/{PROJECT}/web/wp/`
     Then STDOUT should be:
