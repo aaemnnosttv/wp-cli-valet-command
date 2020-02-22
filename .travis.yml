@@ -4,9 +4,13 @@ services:
   - mysql
 
 php:
+  - 7.4
   - 7.3
   - 7.2
-  - 7.1
+
+cache:
+  directories:
+    - $HOME/.cache/composer
 
 install: travis_retry composer install
 
