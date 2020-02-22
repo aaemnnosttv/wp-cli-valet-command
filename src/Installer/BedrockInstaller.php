@@ -42,7 +42,6 @@ class BedrockInstaller extends WordPressInstaller
                 'database_password',
                 'database_host',
                 'http://example.com',
-                '# DB_PREFIX=wp_'
             ],
             [
                 $this->props->databaseName(),
@@ -50,9 +49,14 @@ class BedrockInstaller extends WordPressInstaller
                 $this->props->databasePassword(),
                 $this->props->option('dbhost', 'localhost'),
                 $this->props->fullUrl(),
-                sprintf('DB_PREFIX=%s', $this->props->option('dbprefix'))
             ],
             file_get_contents($this->props->fullPath('.env.example'))
+        );
+        // DB_PREFIX value is quoted in newer versions, not in older.
+        $env_contents = preg_replace(
+            '/# DB_PREFIX=.*/',
+            sprintf('DB_PREFIX=\'%s\'', $this->props->option('dbprefix')),
+            $env_contents
         );
 
         file_put_contents($this->props->fullPath('.env'), $env_contents);
