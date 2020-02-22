@@ -6,7 +6,6 @@ services:
 php:
   - 7.3
   - 7.2
-  - 7.1
 
 install: travis_retry composer install
 
