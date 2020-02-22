@@ -1,5 +1,6 @@
 Feature: It can create new installs for Valet-supported WordPress projects.
 
+  @issue-62
   Scenario: Create a new Bedrock install.
     Given an empty directory
     And a random project name as {PROJECT}
