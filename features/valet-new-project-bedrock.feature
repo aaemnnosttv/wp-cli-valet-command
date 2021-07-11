@@ -4,7 +4,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
   Scenario: Create a new Bedrock install.
     Given an empty directory
     And a random project name as {PROJECT}
-    When I run `wp valet new {PROJECT} --project=bedrock --debug`
+    When I run `wp valet new {PROJECT} --project=bedrock`
     Then the {PROJECT}/web/wp-config.php file should exist
     And the {PROJECT}/.env file should exist
     And STDOUT should contain:
@@ -20,7 +20,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
   Scenario: It can create a new Bedrock install using sqlite instead of MySql.
     Given an empty directory
     And a random project name as {PROJECT}
-    When I run `wp valet new {PROJECT} --project=bedrock --db=sqlite --debug`
+    When I run `wp valet new {PROJECT} --project=bedrock --db=sqlite`
     And STDOUT should contain:
       """
       Success: {PROJECT} ready! https://{PROJECT}.dev
@@ -31,7 +31,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
 
-    When I run `wp valet destroy {PROJECT} --yes`
+    When I try `wp valet destroy {PROJECT} --yes`
     Then the {PROJECT} directory should not exist
 
   @issue-10
@@ -40,7 +40,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
     And a random project name as {PROJECT}
     And a random string as {PATH}
 
-    When I run `wp valet new {PROJECT} --project=bedrock --in={PATH} --debug`
+    When I run `wp valet new {PROJECT} --project=bedrock --in={PATH}`
     Then the {PATH}/{PROJECT}/.env file should exist
 
   @issue-32

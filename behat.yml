@@ -1,4 +1,7 @@
 default:
-  paths:
-    features: features
-    bootstrap: features/bootstrap
+  suites:
+    default:
+      contexts:
+        - WP_CLI_Valet\Tests\Context\FeatureContext
+      paths:
+        - features

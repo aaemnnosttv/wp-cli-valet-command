@@ -279,7 +279,7 @@ class ValetCommand
     public static function debug()
     {
         foreach (func_get_args() as $arg) {
-            $message = is_scalar($arg) ? $arg : print_r($arg, true);
+            $message = is_scalar($arg) ? (string) $arg : print_r($arg, true);
             WP_CLI::debug($message, 'aaemnnosttv/wp-cli-valet-command');
         }
     }

@@ -23,6 +23,11 @@
             "command.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "WP_CLI_Valet\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": ">=5.5",
         "illuminate/container": ">=5.1 <5.7",
@@ -40,7 +45,7 @@
         "wp-cli/entity-command": "^1 || ^2",
         "wp-cli/eval-command": "^1 || ^2",
         "wp-cli/scaffold-package-command": "^0.5.0",
-        "wp-cli/wp-cli-tests": "^2.0"
+        "wp-cli/wp-cli-tests": "^3"
     },
     "scripts": {
         "behat": "run-behat-tests",
