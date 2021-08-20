@@ -41,17 +41,4 @@ class FeatureContext extends \WP_CLI\Tests\Context\FeatureContext
             throw new Exception("Failed to assert that a database exists with the name '$database_name'");
         }
     }
-
-    /**
-     * Note: this method is a modified version of the core method
-     * to fix directory existence assertions until fixed upstream.
-     *
-     * @see https://github.com/wp-cli/wp-cli-tests/pull/127
-     */
-    public function then_a_specific_file_folder_should_exist($path, $type, $action, $expected = null)
-    {
-        clearstatcache(false, $path);
-
-        parent::then_a_specific_file_folder_should_exist($path, $type, $action, $expected);
-    }
 }
