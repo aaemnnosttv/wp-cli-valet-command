@@ -45,7 +45,7 @@
         "wp-cli/entity-command": "^1 || ^2",
         "wp-cli/eval-command": "^1 || ^2",
         "wp-cli/scaffold-package-command": "^0.5.0",
-        "wp-cli/wp-cli-tests": "^3"
+        "wp-cli/wp-cli-tests": "^3.0.15"
     },
     "scripts": {
         "behat": "run-behat-tests",
