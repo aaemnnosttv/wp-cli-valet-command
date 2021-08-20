@@ -48,6 +48,7 @@ Feature: Create a new install.
       | ID | user_login   | user_email          |
       | 1  | {ADMIN}      | hello@{PROJECT}.dev |
 
+  @db:sqlite
   Scenario: It can create a new WordPress install using sqlite for the database.
     Given an empty directory
     And a random project name as {PROJECT}
@@ -60,6 +61,7 @@ Feature: Create a new install.
       Success: {PROJECT} ready! https://{PROJECT}.dev
       """
 
+  @db:sqlite
   Scenario: It can create a new portable WordPress install.
     Given an empty directory
     And a random project name as {PROJECT}
@@ -84,7 +86,7 @@ Feature: Create a new install.
       """
     And the wp_app_{PROJECT} database should exist
 
-  @issue-51
+  @db:sqlite @issue-51
   Scenario: skip-content is compatible with using sqlite for the DB.
     Given an empty directory
     And a wp-cli.yml file:

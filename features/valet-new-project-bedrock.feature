@@ -17,6 +17,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
 
+  @db:sqlite
   Scenario: It can create a new Bedrock install using sqlite instead of MySql.
     Given an empty directory
     And a random project name as {PROJECT}

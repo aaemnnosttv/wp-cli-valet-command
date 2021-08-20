@@ -9,6 +9,7 @@ namespace WP_CLI_Valet;
  * @method static config(...$args)
  * @method static createProject(...$args)
  * @method static install(...$args)
+ * @method static update(...$args)
  * @method static _require(...$args)
  */
 class Composer extends Facade
