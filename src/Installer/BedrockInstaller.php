@@ -30,7 +30,7 @@ class BedrockInstaller extends WordPressInstaller
         ]);
         // Install dependencies with updates (required for older PHP)
         Composer::update([
-            'working-dir'    => $this->props->parentDirectory(),
+            'working-dir'    => $this->props->projectRoot(),
             'no-interaction' => true,
             'no-dev'         => true,
         ]);
