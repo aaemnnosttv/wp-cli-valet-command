@@ -30,7 +30,7 @@
     },
     "require": {
         "php": ">=5.5",
-        "illuminate/container": ">=5.1 <5.7 || >6.5",
+        "illuminate/container": ">=5.1 <5.7 || ^6.5.1 || ^7 || ^8",
         "symfony/filesystem": "^2.7 || ^3 || ^4",
         "wp-cli/config-command": "^1 || ^2",
         "wp-cli/core-command": "^1 || ^2",
