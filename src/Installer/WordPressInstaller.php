@@ -61,10 +61,11 @@ class WordPressInstaller implements InstallerInterface
      */
     public function configure()
     {
-        WP::core('config', [
+        WP::config('create', [
             'dbname'   => $this->props->databaseName(),
             'dbuser'   => $this->props->option('dbuser'),
             'dbpass'   => $this->props->databasePassword(),
+            'dbhost'   => $this->props->option('dbhost'),
             'dbprefix' => $this->props->option('dbprefix'),
         ]);
     }

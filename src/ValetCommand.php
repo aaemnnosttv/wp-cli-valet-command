@@ -117,6 +117,12 @@ class ValetCommand
      * Default: ''
      * ---
      *
+     * [--dbhost=<dbhost>]
+     * : Set the database host.
+     * ---
+     * default: localhost
+     * ---
+     *
      * [--dbprefix=<dbprefix>]
      * : Set the database table prefix.
      * ---
