@@ -16,7 +16,7 @@ This package implements the following commands:
 Create a new WordPress install -- fast
 
 ~~~
-wp valet new <name> [--project=<project>] [--in=<dir>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure] [--portable]
+wp valet new <name> [--project=<project>] [--in=<dir>] [--version=<version>] [--locale=<locale>] [--db=<db>] [--dbname=<dbname>] [--dbuser=<dbuser>] [--dbpass=<dbpass>] [--dbhost=<dbhost>] [--dbprefix=<dbprefix>] [--admin_user=<username>] [--admin_password=<password>] [--admin_email=<email>] [--unsecure] [--portable]
 ~~~
 
 This command will spin up a new WordPress installation -- complete with database and https
@@ -73,6 +73,12 @@ _ready-to-use in your browser_ faster than you can put your pants on.
 		Set the database user password (MySQL only).
 		---
 		Default: ''
+		---
+
+	[--dbhost=<dbhost>]
+		Set the database host.
+		---
+		default: localhost
 		---
 
 	[--dbprefix=<dbprefix>]
@@ -159,9 +165,17 @@ Update, if needed, to the latest stable release with `wp cli update`.
 
 Installing this package requires WP-CLI v1 || v2 or greater. Update to the latest stable release with `wp cli update`.
 
-Once you've done so, you can install this package with:
+Once you've done so, you can install the latest stable version of this package with:
 
-    wp package install git@github.com:aaemnnosttv/wp-cli-valet-command.git
+```bash
+wp package install aaemnnosttv/wp-cli-valet-command:@stable
+```
+
+To install the latest development version of this package, use the following command instead:
+
+```bash
+wp package install aaemnnosttv/wp-cli-valet-command:dev-master
+```
 
 ## Troubleshooting
 
@@ -211,7 +225,7 @@ to enable `wp valet new site` to spin up a full, live, running local WordPress s
 
 ## Support
 
-Github issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
+GitHub issues aren't for general support questions, but there are other venues you can try: https://wp-cli.org/#support
 
 ## Contributing
 
