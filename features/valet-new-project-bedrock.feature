@@ -60,3 +60,18 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       """
       foo
       """
+
+  @issue-73
+  Scenario: It supports using an alternate DB host via the dbhost flag.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    When I run `wp valet new {PROJECT} --project=bedrock --dbhost=127.0.0.1`
+    Then the {PROJECT}/.env file should contain:
+      """
+      DB_HOST='127.0.0.1'
+      """
+    And I run `wp eval 'echo getenv("DB_HOST");' --path={PROJECT}/web/wp/`
+    Then STDOUT should be:
+      """
+      127.0.0.1
+      """
