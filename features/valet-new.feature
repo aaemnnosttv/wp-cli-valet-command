@@ -86,6 +86,22 @@ Feature: Create a new install.
       """
     And the wp_app_{PROJECT} database should exist
 
+  @issue-73
+  Scenario: It supports using an alternate DB host via the dbhost flag.
+    Given an empty directory
+    And a random project name as {PROJECT}
+    When I run `wp valet new app.{PROJECT} --dbhost=127.0.0.1`
+    Then STDOUT should contain:
+      """
+      Success: app.{PROJECT} ready! https://app.{PROJECT}.dev
+      """
+    And the wp_app_{PROJECT} database should exist
+    When I run `wp config get DB_HOST --path=app.{PROJECT}`
+    Then STDOUT should be:
+      """
+      127.0.0.1
+      """
+
   @db:sqlite @issue-51
   Scenario: skip-content is compatible with using sqlite for the DB.
     Given an empty directory
