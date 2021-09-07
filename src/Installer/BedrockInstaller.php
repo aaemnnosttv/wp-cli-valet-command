@@ -62,8 +62,13 @@ class BedrockInstaller extends WordPressInstaller
         );
         // DB_PREFIX value is quoted in newer versions, not in older.
         $env_contents = preg_replace(
-            '/# DB_PREFIX=.*/',
+            '/^# DB_PREFIX=.*/m',
             sprintf('DB_PREFIX=\'%s\'', $this->props->option('dbprefix')),
+            $env_contents
+        );
+        $env_contents = preg_replace(
+            '/^# DB_HOST=.*/m',
+            sprintf('DB_HOST=\'%s\'', $this->props->option('dbhost', 'localhost')),
             $env_contents
         );
 
