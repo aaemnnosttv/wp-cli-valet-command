@@ -48,7 +48,7 @@
         "wp-cli/wp-cli-tests": "^3.0.15"
     },
     "scripts": {
-        "behat": "run-behat-tests",
+        "behat": "behat",
         "update-readme": "wp scaffold package-readme . --force"
     },
     "extra": {
