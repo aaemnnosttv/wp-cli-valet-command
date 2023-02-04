@@ -77,6 +77,12 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "roots/wordpress-core-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "koodimonni/composer-dropin-installer": true
+        }
     }
 }
