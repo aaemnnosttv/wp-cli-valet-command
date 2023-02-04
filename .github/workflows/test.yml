@@ -58,7 +58,8 @@ jobs:
       - run: |
           sudo systemctl start mysql.service
           mysql -e "CREATE DATABASE ${WP_CLI_TEST_DBNAME};" -uroot -proot
-          mysql -e "GRANT ALL PRIVILEGES ON ${WP_CLI_TEST_DBNAME}.* TO '${WP_CLI_TEST_DBUSER}'@'localhost' IDENTIFIED BY '${WP_CLI_TEST_DBPASS}';" -uroot -proot
+          mysql -e "CREATE USER '${WP_CLI_TEST_DBUSER}'@'localhost' IDENTIFIED BY '${WP_CLI_TEST_DBPASS}';" -uroot -proot
+          mysql -e "GRANT ALL PRIVILEGES ON ${WP_CLI_TEST_DBNAME}.* TO '${WP_CLI_TEST_DBUSER}'@'localhost';" -uroot -proot
           composer run behat
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
