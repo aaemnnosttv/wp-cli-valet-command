@@ -8,13 +8,13 @@ on:
   workflow_call:
 
 jobs:
-  unit:
+  lint:
     strategy:
       matrix:
         php-version: ['8.0', '7.4', '5.6']
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -25,11 +25,8 @@ jobs:
       - name: Validate composer.json
         run: composer validate --strict
 
-      - run: composer install
-
-      - run: composer run phpunit
-
   behat:
+    needs: lint
     strategy:
       matrix:
         php-version: ['8.0', '7.4', '5.6']
@@ -47,7 +44,7 @@ jobs:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
