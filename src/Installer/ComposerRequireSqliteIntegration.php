@@ -21,6 +21,12 @@ trait ComposerRequireSqliteIntegration
             'no-interaction' => true,
         ];
 
+        Composer::config(
+            'allow-plugins.koodimonni/composer-dropin-installer',
+            'true',
+            array_merge($flags, ['no-plugins' => true])
+        );
+
         Composer::_require('koodimonni/composer-dropin-installer:^1.0', $flags);
 
         Composer::config('extra.dropin-paths.web/app/', 'package:aaemnnosttv/wp-sqlite-db:src/db.php', $flags);

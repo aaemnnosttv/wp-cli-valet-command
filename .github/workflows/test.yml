@@ -1,0 +1,67 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+  behat:
+    needs: lint
+    strategy:
+      matrix:
+        php-version: ['7.4']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+
+      - run: composer install
+
+      - run: |
+          sudo systemctl start mysql.service
+          mysql -e "CREATE DATABASE ${WP_CLI_TEST_DBNAME};" -uroot -proot
+          mysql -e "CREATE USER '${WP_CLI_TEST_DBUSER}'@'localhost' IDENTIFIED BY '${WP_CLI_TEST_DBPASS}';" -uroot -proot
+          mysql -e "GRANT ALL PRIVILEGES ON ${WP_CLI_TEST_DBNAME}.* TO '${WP_CLI_TEST_DBUSER}'@'localhost';" -uroot -proot
+          mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY ''; FLUSH PRIVILEGES;" -uroot -proot
+          composer run behat
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: wp_cli_test
+          MYSQL_USER: wp_cli_test
+          MYSQL_PASSWORD: password1
+          MYSQL_HOST: 127.0.0.1
+          WP_CLI_TEST_DBUSER: wp_cli_test
+          WP_CLI_TEST_DBPASS: password1
+          WP_CLI_TEST_DBNAME: wp_cli_test
+          WP_CLI_TEST_DBHOST: 127.0.0.1:3306
