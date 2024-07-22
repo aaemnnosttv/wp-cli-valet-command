@@ -3,7 +3,7 @@ aaemnnosttv/wp-cli-valet-command
 
 White-glove services for turn-key installs in seconds.
 
-[![Travis Build](https://img.shields.io/travis/aaemnnosttv/wp-cli-valet-command/master.svg)](https://travis-ci.org/aaemnnosttv/wp-cli-valet-command) [![Packagist](https://img.shields.io/packagist/v/aaemnnosttv/wp-cli-valet-command.svg)](https://packagist.org/packages/aaemnnosttv/wp-cli-valet-command)
+[![Packagist](https://img.shields.io/packagist/v/aaemnnosttv/wp-cli-valet-command.svg)](https://packagist.org/packages/aaemnnosttv/wp-cli-valet-command)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Troubleshooting](#troubleshooting) | [Support](#support) | [Contributing](#contributing)
 
@@ -21,6 +21,10 @@ wp valet new <name> [--project=<project>] [--in=<dir>] [--version=<version>] [--
 
 This command will spin up a new WordPress installation -- complete with database and https
 _ready-to-use in your browser_ faster than you can put your pants on.
+
+**NB** If you have not used `valet park` for the directory or parent directory you are 
+running the installation in you need to do a `valet link` to make sure the site will run
+without running into 404s.
 
 **OPTIONS**
 
