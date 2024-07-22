@@ -49,15 +49,13 @@ class ShellCommand
         $assoc      = \WP_CLI\Utils\assoc_args_to_str($assoc);
         $run_command = $this->rootCommand() . " $command $positional $assoc";
 
-        Command::debug("Running: $run_command");
+        Command::debug(static::class, "Running: $run_command");
 
         $result = Process::create(
             $run_command,
             $this->getCwd(),
             $this->getEnv()
         )->run();
-
-        $result->caller = static::class;
 
         Command::debug($result);
 
