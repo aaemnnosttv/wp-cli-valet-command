@@ -55,7 +55,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       """
       DB_PREFIX='foo'
       """
-    And I run `wp eval 'echo getenv("DB_PREFIX");' --path={PATH}/{PROJECT}/web/wp/`
+    And I run `wp eval 'echo $_SERVER["DB_PREFIX"];' --path={PATH}/{PROJECT}/web/wp/`
     Then STDOUT should be:
       """
       foo
@@ -70,7 +70,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       """
       DB_HOST='127.0.0.1'
       """
-    And I run `wp eval 'echo getenv("DB_HOST");' --path={PROJECT}/web/wp/`
+    And I run `wp eval 'echo $_SERVER["DB_HOST"];' --path={PROJECT}/web/wp/`
     Then STDOUT should be:
       """
       127.0.0.1
