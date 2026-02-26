@@ -130,6 +130,26 @@ class Props
     }
 
     /**
+     * Whether or not the install will be a multisite network.
+     *
+     * @return bool
+     */
+    public function isMultisite()
+    {
+        return (bool) $this->option('network') || $this->option('subdomains');
+    }
+
+    /**
+     * Whether or not the install will use subdomains for multisite.
+     *
+     * @return bool
+     */
+    public function isSubdomains()
+    {
+        return (bool) $this->option('subdomains');
+    }
+
+    /**
      * Get an option value by name.
      *
      * @param      $name

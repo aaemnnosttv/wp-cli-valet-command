@@ -111,6 +111,18 @@ class WordPressInstaller implements InstallerInterface
     {
         Command::debug('Installing WordPress');
 
+        if ($this->props->isMultisite()) {
+            $this->runMultisiteInstall();
+        } else {
+            $this->runSingleInstall();
+        }
+    }
+
+    /**
+     * Run single site WordPress install.
+     */
+    protected function runSingleInstall()
+    {
         WP::core('install', [
             'url'            => $this->props->fullUrl(),
             'title'          => $this->props->site_name,
@@ -119,6 +131,27 @@ class WordPressInstaller implements InstallerInterface
             'admin_email'    => $this->props->option('admin_email', "admin@{$this->props->domain}"),
             'skip-email'     => true
         ]);
+    }
+
+    /**
+     * Run multisite network WordPress install.
+     */
+    protected function runMultisiteInstall()
+    {
+        $args = [
+            'url'            => $this->props->fullUrl(),
+            'title'          => $this->props->site_name,
+            'admin_user'     => $this->props->option('admin_user'),
+            'admin_password' => $this->props->option('admin_password'),
+            'admin_email'    => $this->props->option('admin_email', "admin@{$this->props->domain}"),
+            'skip-email'     => true
+        ];
+
+        if ($this->props->isSubdomains()) {
+            $args['subdomains'] = true;
+        }
+
+        WP::core('multisite-install', $args);
     }
 
     /**

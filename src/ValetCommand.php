@@ -154,6 +154,12 @@ class ValetCommand
      * [--portable]
      * : Provision the site to be portable. Implies --unsecure and --db=sqlite.
      *
+     * [--network]
+     * : Install WordPress as a multisite network.
+     *
+     * [--subdomains]
+     * : Use subdomains for multisite. Implies --network.
+     *
      * @subcommand new
      *
      * @when before_wp_load
