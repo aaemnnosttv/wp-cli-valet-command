@@ -29,9 +29,9 @@
         }
     },
     "require": {
-        "php": ">=5.5",
-        "illuminate/container": ">=5.1 <5.7 || ^6.5.1 || ^7 || ^8",
-        "symfony/filesystem": "^2.7 || ^3 || ^4",
+        "php": ">=7.4",
+        "illuminate/container": ">=5.1 <5.7 || ^6.5.1 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12",
+        "symfony/filesystem": "^2.7 || ^3 || ^4 || ^5 || ^6 || ^7",
         "wp-cli/config-command": "^1 || ^2",
         "wp-cli/core-command": "^1 || ^2",
         "wp-cli/db-command": "^1 || ^2",
@@ -45,7 +45,7 @@
         "wp-cli/entity-command": "^1 || ^2",
         "wp-cli/eval-command": "^1 || ^2",
         "wp-cli/scaffold-package-command": "^2.0",
-        "wp-cli/wp-cli-tests": "^3.0.15"
+        "wp-cli/wp-cli-tests": "^4.0 || ^5.0"
     },
     "scripts": {
         "behat": "behat",
