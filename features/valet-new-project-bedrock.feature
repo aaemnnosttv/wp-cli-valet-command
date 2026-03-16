@@ -27,7 +27,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       Success: {PROJECT} ready! https://{PROJECT}.dev
       """
 
-    When I run `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
+    When I try `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
     Then STDOUT should be a table containing rows:
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
@@ -55,7 +55,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       """
       DB_PREFIX='foo'
       """
-    And I run `wp eval 'echo getenv("DB_PREFIX");' --path={PATH}/{PROJECT}/web/wp/`
+    And I try `wp eval 'echo getenv("DB_PREFIX");' --path={PATH}/{PROJECT}/web/wp/`
     Then STDOUT should be:
       """
       foo
@@ -70,7 +70,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       """
       DB_HOST='127.0.0.1'
       """
-    And I run `wp eval 'echo getenv("DB_HOST");' --path={PROJECT}/web/wp/`
+    And I try `wp eval 'echo getenv("DB_HOST");' --path={PROJECT}/web/wp/`
     Then STDOUT should be:
       """
       127.0.0.1
