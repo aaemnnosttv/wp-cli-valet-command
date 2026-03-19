@@ -27,7 +27,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       Success: {PROJECT} ready! https://{PROJECT}.dev
       """
 
-    When I try `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
+    When I run `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
     Then STDOUT should be a table containing rows:
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
