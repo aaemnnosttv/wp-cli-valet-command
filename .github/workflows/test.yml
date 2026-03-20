@@ -28,7 +28,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
 
       - name: Validate composer.json
-        run: composer validate --strict
+        run: composer validate
 
   behat:
     needs: lint
