@@ -15,6 +15,8 @@
     "support": {
         "issues": "https://github.com/aaemnnosttv/wp-cli-valet-command/issues"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "WP_CLI_Valet\\": "src"
@@ -29,23 +31,24 @@
         }
     },
     "require": {
-        "php": ">=8.0",
-        "illuminate/container": ">=8.83.27 <5.7 || ^6.5.1 || ^7 || ^8.83.27 || ^9 || ^10 || ^11 || ^12",
-        "symfony/filesystem": "^5.4.45 || ^6 || ^7",
-        "wp-cli/config-command": "^1 || ^2.4",
-        "wp-cli/core-command": "^1 || ^2.1.23",
-        "wp-cli/db-command": "^1 || ^2.1.3",
-        "wp-cli/wp-cli": "^1 || ^2.12"
+        "php": ">=5.5",
+        "illuminate/container": ">=5.1 <5.7 || >=6",
+        "symfony/filesystem": ">=2.7",
+        "wp-cli/config-command": "^1 || ^2",
+        "wp-cli/core-command": "^1 || ^2",
+        "wp-cli/db-command": "^1 || ^2",
+        "wp-cli/wp-cli": "^1 || ^2"
     },
     "require-dev": {
-        "aaemnnosttv/wp-sqlite-db": "^1.3.3",
-        "koodimonni/composer-dropin-installer": "^1.4",
+        "aaemnnosttv/wp-sqlite-db": "^1.0",
+        "koodimonni/composer-dropin-installer": "^1.2",
         "roave/security-advisories": "dev-master",
-        "roots/bedrock": "^1.19.3",
-        "wp-cli/entity-command": "^1 || ^2.8.4",
-        "wp-cli/eval-command": "^1 || ^2.2.7",
-        "wp-cli/scaffold-package-command": "^2.1",
-        "wp-cli/wp-cli-tests": "^5"
+        "roots/bedrock": "^1.8",
+        "wp-cli/entity-command": "^1 || ^2",
+        "wp-cli/eval-command": "^1 || ^2",
+        "wp-cli/scaffold-package-command": "^2.0",
+        "wp-cli/wp-cli-tests": "4.3.13",
+        "phpcompatibility/php-compatibility": "10.0.0-alpha2 as dev-develop"
     },
     "scripts": {
         "behat": "behat",
@@ -81,8 +84,7 @@
             "composer/installers": true,
             "roots/wordpress-core-installer": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "koodimonni/composer-dropin-installer": true,
-            "phpstan/extension-installer": true
+            "koodimonni/composer-dropin-installer": true
         }
     }
 }
