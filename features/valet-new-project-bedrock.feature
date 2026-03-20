@@ -12,7 +12,7 @@ Feature: It can create new installs for Valet-supported WordPress projects.
       Success: {PROJECT} ready! https://{PROJECT}.dev
       """
 
-    When I run `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
+    When I try `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
     Then STDOUT should be a table containing rows:
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
@@ -21,13 +21,13 @@ Feature: It can create new installs for Valet-supported WordPress projects.
   Scenario: It can create a new Bedrock install using sqlite instead of MySql.
     Given an empty directory
     And a random project name as {PROJECT}
-    When I try `wp valet new {PROJECT} --project=bedrock --db=sqlite`
+    When I run `wp valet new {PROJECT} --project=bedrock --db=sqlite`
     And STDOUT should contain:
       """
       Success: {PROJECT} ready! https://{PROJECT}.dev
       """
 
-    When I run `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
+    When I try `cd {PROJECT} && wp user list --fields=ID,user_login,user_email`
     Then STDOUT should be a table containing rows:
       | ID | user_login | user_email          |
       | 1  | admin      | admin@{PROJECT}.dev |
