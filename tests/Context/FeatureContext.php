@@ -27,9 +27,10 @@ class FeatureContext extends \WP_CLI\Tests\Context\FeatureContext
      * @Then /^the ([^\s]+) database should( not)? exist$/
      */
     public function theGivenDatabaseShouldNotExist($database_name, $should_not_exist = false) {
+        $mysql_binary = $this->variables['MYSQL_BINARY'];
         $database_name = $this->replace_variables($database_name);
 
-        $process = Process::create("mysql -e 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \"$database_name\";' -uroot")
+        $process = Process::create("$mysql_binary -e 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \"$database_name\";' -uroot")
             ->run();
 
         $exists = strlen(trim($process->stdout)) > 0;

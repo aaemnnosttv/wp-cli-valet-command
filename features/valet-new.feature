@@ -27,7 +27,7 @@ Feature: Create a new install.
     And a random string as {ADMIN}
     And a random string as {PATH}
 
-    When I run `wp valet new {PROJECT} --in={PATH} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=4.5 --dbname=wp_cli_test --dbprefix={ADMIN}_ --dbuser=wp_cli_test --dbpass=password1`
+    When I try `wp valet new {PROJECT} --in={PATH} --admin_user={ADMIN} --admin_email=hello@{PROJECT}.dev --version=6.0 --dbname=wp_cli_test --dbprefix={ADMIN}_ --dbuser=wp_cli_test --dbpass=password1`
     Then the {PATH}/{PROJECT}/wp-config.php file should exist
     Then the wp_cli_test database should exist
 
@@ -40,7 +40,7 @@ Feature: Create a new install.
     When I run `wp core version --path={PATH}/{PROJECT}`
     Then STDOUT should be:
       """
-      4.5
+      6.0
       """
 
     When I run `wp user list --fields=ID,user_login,user_email --path={PATH}/{PROJECT}`
